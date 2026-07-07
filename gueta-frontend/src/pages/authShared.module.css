@@ -1,0 +1,98 @@
+.page {
+  min-height: 100vh;
+  padding: var(--mantine-spacing-md);
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--mantine-spacing-xl);
+  border-radius: var(--mantine-radius-lg);
+  border: 1px solid var(--mantine-color-default-border);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.header {
+  gap: var(--mantine-spacing-xs);
+  align-items: center;
+  margin-bottom: var(--mantine-spacing-lg);
+}
+
+.brand {
+  gap: var(--mantine-spacing-sm);
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-weight: 800;
+  line-height: 1;
+  color: #0f1216;
+  background: linear-gradient(
+    135deg,
+    var(--mantine-color-blue-5),
+    var(--mantine-color-teal-5)
+  );
+}
+
+.brandName {
+  font-size: var(--mantine-font-size-xl);
+  font-weight: 700;
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-dimmed);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-md);
+}
+
+.blockButton {
+  width: 100%;
+}
+
+.googleButton {
+  composes: blockButton;
+  --button-bg: var(--mantine-color-default);
+  --button-hover: var(--mantine-color-default-hover);
+  --button-color: var(--mantine-color-default-color);
+  --button-bd: 1px solid var(--mantine-color-default-border);
+}
+
+.googleButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+.divider {
+  margin-top: var(--mantine-spacing-lg);
+  margin-bottom: var(--mantine-spacing-lg);
+}
+
+.footer {
+  text-align: center;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-dimmed);
+  margin-top: var(--mantine-spacing-lg);
+}
+
+.error {
+  text-align: center;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-red-4);
+  margin-top: var(--mantine-spacing-sm);
+}

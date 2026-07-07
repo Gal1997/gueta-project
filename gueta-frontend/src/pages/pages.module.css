@@ -1,0 +1,14 @@
+.fullPage {
+  min-height: 100vh;
+}
+
+.stack {
+  align-items: center;
+  text-align: center;
+  gap: var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-md);
+}
+
+.dimmed {
+  color: var(--mantine-color-dimmed);
+}
