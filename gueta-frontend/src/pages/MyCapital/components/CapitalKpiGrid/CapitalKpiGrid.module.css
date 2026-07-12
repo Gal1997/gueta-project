@@ -1,0 +1,59 @@
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--mantine-spacing-md);
+}
+
+.kpiCard {
+  padding: var(--mantine-spacing-lg);
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-lg);
+  background-color: var(--mantine-color-default);
+  box-shadow: var(--mantine-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-xs);
+}
+
+.kpiLabel {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-dimmed);
+}
+
+.kpiValue {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.kpiComparison {
+  font-size: var(--mantine-font-size-xs);
+  color: var(--mantine-color-dimmed);
+}
+
+.kpiTotal {
+  color: var(--mantine-color-blue-4);
+}
+
+.kpiAvailable {
+  color: var(--mantine-color-teal-4);
+}
+
+.kpiInvestments {
+  color: var(--mantine-color-indigo-4);
+}
+
+.kpiFuture {
+  color: var(--mantine-color-violet-4);
+}
+
+@media (max-width: 1100px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+}

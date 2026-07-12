@@ -1,33 +1,16 @@
-import type { User } from "@prisma/client";
 import { prisma } from "../../db/prisma";
 import { HttpError } from "../../lib/errors";
 import { fetchGoogleProfile } from "../../lib/google";
+import { toPublicUser } from "../../lib/mappers";
 import { hashPassword, verifyPassword } from "../../lib/password";
 import type { LoginInput, RegisterInput } from "./auth.schemas";
-
-export interface PublicUser {
-  id: string;
-  email: string;
-  name: string;
-  provider: "password" | "google";
-  onboarded: boolean;
-}
-
-function toPublicUser(user: User): PublicUser {
-  return {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    provider: user.provider,
-    onboarded: user.onboarded,
-  };
-}
+import type { PublicUser } from "./auth.types";
 
 export async function registerUser(input: RegisterInput): Promise<PublicUser> {
   const email = input.email.toLowerCase();
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    throw new HttpError(409, "An account with this email already exists.");
+    throw new HttpError(409, "כבר קיים חשבון עם אימייל זה.");
   }
 
   const passwordHash = await hashPassword(input.password);
@@ -43,12 +26,12 @@ export async function loginUser(input: LoginInput): Promise<PublicUser> {
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user || !user.passwordHash) {
-    throw new HttpError(401, "Invalid email or password.");
+    throw new HttpError(401, "אימייל או סיסמה שגויים.");
   }
 
   const valid = await verifyPassword(user.passwordHash, input.password);
   if (!valid) {
-    throw new HttpError(401, "Invalid email or password.");
+    throw new HttpError(401, "אימייל או סיסמה שגויים.");
   }
 
   return toPublicUser(user);
@@ -60,7 +43,6 @@ export async function loginWithGoogle(accessToken: string): Promise<PublicUser> 
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    // Link the Google id if this account was created another way.
     if (!existing.googleId) {
       const updated = await prisma.user.update({
         where: { id: existing.id },
@@ -95,3 +77,5 @@ export async function getUserById(userId: string): Promise<PublicUser | null> {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   return user ? toPublicUser(user) : null;
 }
+
+export type { PublicUser } from "./auth.types";

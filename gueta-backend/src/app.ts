@@ -2,6 +2,7 @@ import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
 import Fastify, {
+  type FastifyError,
   type FastifyInstance,
   type FastifyReply,
   type FastifyRequest,
@@ -9,7 +10,11 @@ import Fastify, {
 import { ZodError } from "zod";
 import { env } from "./config/env";
 import { HttpError } from "./lib/errors";
+import { SESSION_COOKIE_NAME } from "./lib/session";
 import { authRoutes } from "./modules/auth/auth.routes";
+import { capitalRoutes } from "./modules/capital/capital.routes";
+import { financeRoutes } from "./modules/finance/finance.routes";
+import { onboardingRoutes } from "./modules/onboarding/onboarding.routes";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -32,7 +37,7 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   await app.register(jwt, {
     secret: env.JWT_SECRET,
-    cookie: { cookieName: "token", signed: false },
+    cookie: { cookieName: SESSION_COOKIE_NAME, signed: false },
   });
 
   app.decorate(
@@ -46,7 +51,7 @@ export async function buildApp(): Promise<FastifyInstance> {
     },
   );
 
-  app.setErrorHandler((error, request, reply) => {
+  app.setErrorHandler((error: FastifyError, request, reply) => {
     if (error instanceof ZodError) {
       return reply.code(400).send({
         message: "Validation failed",
@@ -77,6 +82,9 @@ export async function buildApp(): Promise<FastifyInstance> {
   app.get("/health", async () => ({ status: "ok" }));
 
   await app.register(authRoutes, { prefix: "/api/auth" });
+  await app.register(onboardingRoutes, { prefix: "/api/onboarding" });
+  await app.register(financeRoutes, { prefix: "/api/finance" });
+  await app.register(capitalRoutes, { prefix: "/api/capital" });
 
   return app;
 }

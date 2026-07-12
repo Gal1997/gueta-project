@@ -1,0 +1,28 @@
+.fullPage {
+  min-height: 100vh;
+}
+
+.page {
+  min-height: 100vh;
+  max-width: var(--layout-max-width);
+  margin-inline: auto;
+  padding: var(--mantine-spacing-xl) var(--mantine-spacing-md);
+  min-width: 0;
+  width: 100%;
+}
+
+.dashboard {
+  gap: var(--mantine-spacing-md);
+  min-width: 0;
+}
+
+.tablesStack {
+  gap: var(--mantine-spacing-md);
+  min-width: 0;
+}
+
+.error {
+  color: var(--mantine-color-red-4);
+  text-align: center;
+  margin-bottom: var(--mantine-spacing-md);
+}

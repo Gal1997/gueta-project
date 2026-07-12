@@ -1,0 +1,11 @@
+/* Standard icon sizes — use className on icons or target via parent selectors */
+
+.sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+.md {
+  width: 1.25rem;
+  height: 1.25rem;
+}

@@ -1,0 +1,57 @@
+.page {
+  min-height: 100vh;
+  padding: var(--mantine-spacing-xl) var(--mantine-spacing-md);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.card {
+  width: 100%;
+  max-width: 800px;
+  padding: var(--mantine-spacing-xl);
+  border-radius: var(--mantine-radius-lg);
+  border: 1px solid var(--mantine-color-default-border);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.escapeActions {
+  justify-content: space-between;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.escapeButton {
+  --button-bg: transparent;
+  --button-hover: var(--mantine-color-default-hover);
+  --button-color: var(--mantine-color-default-color);
+  --button-bd: 1px solid var(--mantine-color-default-border);
+}
+
+.header {
+  gap: var(--mantine-spacing-xs);
+  align-items: center;
+  margin-bottom: var(--mantine-spacing-lg);
+}
+
+.title {
+  text-align: center;
+  font-size: 26px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-dimmed);
+}
+
+.finishButton {
+  width: 100%;
+  margin-top: var(--mantine-spacing-lg);
+}
+
+.error {
+  text-align: center;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-red-4);
+  margin-top: var(--mantine-spacing-sm);
+}

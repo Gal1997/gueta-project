@@ -1,0 +1,7 @@
+.modalTitle {
+  font-weight: 600;
+}
+
+.form {
+  gap: var(--mantine-spacing-md);
+}

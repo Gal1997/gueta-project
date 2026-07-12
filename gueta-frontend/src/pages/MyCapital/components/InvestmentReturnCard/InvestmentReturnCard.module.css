@@ -1,0 +1,54 @@
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mantine-spacing-md);
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.statCard {
+  padding: var(--mantine-spacing-md);
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  background-color: var(--mantine-color-default);
+}
+
+.statLabel {
+  color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-sm);
+  margin-bottom: 4px;
+}
+
+.statValue {
+  font-size: var(--mantine-font-size-xl);
+  font-weight: 700;
+}
+
+.depositsValue {
+  composes: statValue;
+  color: var(--mantine-color-white);
+  font-weight: 400;
+}
+
+.returnValue {
+  composes: statValue;
+}
+
+.returnPositive {
+  composes: returnValue;
+  color: var(--mantine-color-teal-4);
+}
+
+.returnNegative {
+  composes: returnValue;
+  color: var(--mantine-color-red-4);
+}
+
+.returnNeutral {
+  composes: returnValue;
+}
+
+@media (max-width: 480px) {
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+}

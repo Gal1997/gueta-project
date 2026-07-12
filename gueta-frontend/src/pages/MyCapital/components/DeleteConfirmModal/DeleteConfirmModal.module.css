@@ -1,0 +1,11 @@
+.modalTitle {
+  font-weight: 600;
+}
+
+.deleteDialog {
+  gap: var(--mantine-spacing-md);
+}
+
+.deleteActions {
+  justify-content: flex-end;
+}

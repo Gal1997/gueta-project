@@ -1,0 +1,77 @@
+.cardBase {
+  padding: var(--mantine-spacing-lg);
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-lg);
+  background-color: var(--mantine-color-default);
+  box-shadow: var(--mantine-shadow-sm);
+}
+
+.tableCard {
+  composes: cardBase;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tableScroll {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.cardTitle {
+  font-size: var(--mantine-font-size-md);
+  font-weight: 600;
+}
+
+.cardHeader {
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.cardHeader .cardTitle {
+  margin-bottom: 0;
+}
+
+.addButton {
+  --button-bg: transparent;
+  --button-hover: var(--mantine-color-default-hover);
+  --button-color: var(--mantine-color-default-color);
+  --button-bd: 1px solid var(--mantine-color-default-border);
+}
+
+.addButton svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.actionsCol {
+  width: 52px;
+}
+
+.table {
+  width: 100%;
+}
+
+.table th {
+  color: var(--mantine-color-dimmed);
+  font-weight: 600;
+  text-align: start;
+}
+
+.table .remainingCol {
+  text-align: center;
+}
+
+.emptyText {
+  color: var(--mantine-color-dimmed);
+  text-align: center;
+  padding: var(--mantine-spacing-md);
+}
+
+.noResultsText {
+  composes: emptyText;
+}
+
+.billingCol {
+  white-space: nowrap;
+}

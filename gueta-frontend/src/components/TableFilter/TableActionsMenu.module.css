@@ -1,0 +1,21 @@
+.menuButton {
+  --ai-bg: transparent;
+  --ai-hover: var(--mantine-color-default-hover);
+  --ai-color: var(--mantine-color-dimmed);
+  --ai-bd: 1px solid var(--mantine-color-default-border);
+}
+
+.menuButton svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.menuItemActive {
+  border: 1px solid gray;
+  border-radius: var(--mantine-radius-sm);
+}
+
+.menuItemIcon svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}

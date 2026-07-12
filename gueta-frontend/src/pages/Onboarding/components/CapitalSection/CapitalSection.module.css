@@ -1,0 +1,8 @@
+.groupTitle {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+}
+
+.groups {
+  gap: var(--mantine-spacing-lg);
+}

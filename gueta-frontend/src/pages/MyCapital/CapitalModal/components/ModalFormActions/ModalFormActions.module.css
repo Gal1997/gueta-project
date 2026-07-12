@@ -1,0 +1,9 @@
+.actions {
+  justify-content: flex-end;
+  margin-top: var(--mantine-spacing-xs);
+}
+
+.error {
+  color: var(--mantine-color-red-4);
+  font-size: var(--mantine-font-size-sm);
+}

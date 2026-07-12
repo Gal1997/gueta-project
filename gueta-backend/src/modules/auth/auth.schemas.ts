@@ -1,18 +1,18 @@
 import { z } from "zod";
 
 export const registerSchema = z.object({
-  name: z.string().trim().min(2, "Name must be at least 2 characters"),
-  email: z.string().trim().email("A valid email is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  name: z.string().trim().min(2, "השם חייב להכיל לפחות 2 תווים"),
+  email: z.string().trim().email("נדרש אימייל תקין"),
+  password: z.string().min(6, "הסיסמה חייבת להכיל לפחות 6 תווים"),
 });
 
 export const loginSchema = z.object({
-  email: z.string().trim().email("A valid email is required"),
-  password: z.string().min(1, "Password is required"),
+  email: z.string().trim().email("נדרש אימייל תקין"),
+  password: z.string().min(1, "נדרשת סיסמה"),
 });
 
 export const googleSchema = z.object({
-  accessToken: z.string().min(1, "Missing Google access token"),
+  accessToken: z.string().min(1, "חסר אסימון גישה של Google"),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

@@ -31,20 +31,20 @@ export async function fetchGoogleProfile(
   accessToken: string,
 ): Promise<GoogleProfile> {
   if (!isGoogleEnabled) {
-    throw new HttpError(503, "Google login is not configured on the server.");
+    throw new HttpError(503, "התחברות עם Google אינה מוגדרת בשרת.");
   }
 
   const tokenInfoRes = await fetch(
     `https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(accessToken)}`,
   );
   if (!tokenInfoRes.ok) {
-    throw new HttpError(401, "Could not verify Google account.");
+    throw new HttpError(401, "לא ניתן לאמת את חשבון ה-Google.");
   }
   const tokenInfo = (await tokenInfoRes.json()) as TokenInfo;
 
   const audience = tokenInfo.aud ?? tokenInfo.azp;
   if (audience !== env.GOOGLE_CLIENT_ID) {
-    throw new HttpError(401, "Google token was issued for a different app.");
+    throw new HttpError(401, "אסימון ה-Google הונפק עבור אפליקציה אחרת.");
   }
 
   const userInfoRes = await fetch(
@@ -52,12 +52,12 @@ export async function fetchGoogleProfile(
     { headers: { Authorization: `Bearer ${accessToken}` } },
   );
   if (!userInfoRes.ok) {
-    throw new HttpError(401, "Could not read Google profile.");
+    throw new HttpError(401, "לא ניתן לקרוא את פרופיל ה-Google.");
   }
   const userInfo = (await userInfoRes.json()) as UserInfo;
 
   if (!userInfo.email) {
-    throw new HttpError(401, "Google account has no email address.");
+    throw new HttpError(401, "לחשבון ה-Google אין כתובת אימייל.");
   }
 
   return {

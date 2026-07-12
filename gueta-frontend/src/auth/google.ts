@@ -16,7 +16,7 @@ function loadGisScript(): Promise<void> {
     script.defer = true;
     script.onload = () => resolve();
     script.onerror = () =>
-      reject(new Error("Failed to load Google Identity Services."));
+      reject(new Error("טעינת שירותי הזהות של Google נכשלה."));
     document.head.appendChild(script);
   });
 
@@ -29,7 +29,7 @@ function loadGisScript(): Promise<void> {
  */
 export async function requestGoogleAccessToken(): Promise<string> {
   if (!CLIENT_ID) {
-    throw new Error("Google login is not configured.");
+    throw new Error("התחברות עם Google אינה מוגדרת.");
   }
 
   await loadGisScript();
@@ -46,7 +46,7 @@ export async function requestGoogleAccessToken(): Promise<string> {
         resolve(response.access_token);
       },
       error_callback: (error) =>
-        reject(new Error(error.message ?? "Google sign-in was cancelled.")),
+        reject(new Error(error.message ?? "ההתחברות עם Google בוטלה.")),
     });
 
     client.requestAccessToken();

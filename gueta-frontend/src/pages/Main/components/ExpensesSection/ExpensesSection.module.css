@@ -1,0 +1,37 @@
+.expensesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--mantine-spacing-md);
+  min-width: 0;
+}
+
+.leftBox,
+.rightTopBox,
+.rightBottomBox {
+  grid-column: 1;
+  grid-row: auto;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .expensesGrid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    align-items: stretch;
+  }
+
+  .leftBox {
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+
+  .rightTopBox {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .rightBottomBox {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}

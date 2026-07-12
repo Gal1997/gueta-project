@@ -1,0 +1,42 @@
+.rows {
+  gap: 25px;
+}
+
+.row {
+  display: flex;
+  align-items: flex-end;
+  padding: var(--mantine-spacing-md);
+  border: 1px solid #E0E0E0;
+  border-radius: var(--mantine-radius-md);
+  background-color: var(--mantine-color-default);
+}
+
+.fields {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--mantine-spacing-sm);
+}
+
+.deleteButton {
+  align-self: flex-end;
+  --ai-bg: transparent;
+  --ai-hover: var(--mantine-color-red-light);
+  --ai-color: var(--mantine-color-red-4);
+  --ai-bd: 1px solid var(--mantine-color-default-border);
+}
+
+.addButton {
+  align-self: flex-start;
+  --button-bg: transparent;
+  --button-hover: var(--mantine-color-default-hover);
+  --button-color: var(--mantine-color-default-color);
+  --button-bd: 1px solid var(--mantine-color-default-border);
+}
+
+.addButton svg,
+.deleteButton svg {
+  width: 1rem;
+  height: 1rem;
+}

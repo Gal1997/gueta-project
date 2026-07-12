@@ -1,0 +1,80 @@
+---
+description: Frontend page folder structure and Mantine-only UI rules
+globs: gueta-frontend/**
+alwaysApply: false
+---
+
+# Frontend Page Conventions
+
+## Page folder structure
+
+Every page under `gueta-frontend/src/pages/<PageName>/` must follow:
+
+```
+<PageName>/
+  <PageName>.tsx      # UI only — no business logic
+  use<PageName>.ts    # hook — state, effects, handlers, data fetching
+  consts.ts           # constants, labels, formatters, initial values
+  utils.ts            # pure helper functions
+  <PageName>.module.css
+```
+
+Examples: `useLogin.ts`, `useMain.ts`, `useHistory.ts`.
+
+Sub-components in a page folder (e.g. `FinanceModal/`) follow the same pattern with their own `useX`, `consts.ts`, `utils.ts`.
+
+## Mantine-only UI
+
+- Never use raw HTML elements (`div`, `span`, `button`, `p`, `h1`, etc.).
+- Use Mantine components: `Box`, `Stack`, `Group`, `Text`, `Title`, `Button`, `Paper`, `Table`, etc.
+- Forms: `<Box component="form">` is allowed (Mantine Box, not raw HTML).
+- Icons: `@tabler/icons-react` with Mantine `ActionIcon` / `Button` sections.
+
+## Separation of concerns
+
+- **Component (.tsx)**: JSX layout and Mantine props only.
+- **Hook (useX.ts)**: `useState`, `useEffect`, `useForm`, navigation, API calls, event handlers.
+- **consts.ts**: static values, option lists, error messages, `Intl` formatters.
+- **utils.ts**: pure functions with no React hooks.
+
+## Component splitting
+
+Split a `.tsx` file when **both** are true:
+1. It exceeds **~100 lines**
+2. It has **distinct visual sections** (accordion panel, chart group, data table, modal form block, header bar)
+
+When splitting:
+- Extract sub-components to `<Page>/components/<Name>/`
+- Page `.tsx` becomes a thin shell: calls `useX`, composes children, passes props/callbacks
+- Sub-components are **presentational**: props in, JSX out — no `useEffect`, API calls, or navigation
+- Hooks / consts / utils stay at the page root
+- Do not split hooks/utils unless they exceed **~150 lines** and contain unrelated concerns
+
+## CSS modules — no inline styling
+
+All visual styling belongs in `.module.css` files — not in `.tsx`.
+
+- **Never** use the `style` prop unless there is no CSS alternative (e.g. truly dynamic runtime values).
+- **Never** pass sizing/style props to icons (`size`, `stroke`, `color`) — set `width` / `height` / `color` in CSS via `className` on the icon or a parent selector (e.g. `.navButton svg { width: 1rem; height: 1rem; }`).
+- **Never** use Mantine style shorthand props (`p`, `px`, `m`, `w`, `h`, `bg`, `c`, etc.) when the value is static — use a CSS module class instead.
+- Prefer Mantine CSS variables in modules (`--button-bg`, `--ai-color`, etc.) for component theming.
+- App-wide icon size utilities live in `src/styles/icons.module.css`; component-specific icon sizing targets parent classes in that component's module.
+- Shared visual rules go in `components/shared/*.module.css` or page-level shared modules (e.g. `authShared.module.css`).
+- Page/navbar max-width uses the global `--layout-max-width` CSS variable in `index.css` — do not hardcode pixel values per page.
+
+## Component folder structure
+
+Every extracted component lives in its own folder:
+
+```
+<Page>/components/<ComponentName>/
+  <ComponentName>.tsx
+  <ComponentName>.module.css   # when styles are not shared
+  consts.ts                    # optional — component-only constants
+  utils.ts                     # optional — component-only pure helpers
+  use<ComponentName>.ts        # optional — component-only logic
+```
+
+- Import as `./components/<ComponentName>/<ComponentName>`
+- Styles shared across sibling components go in `<Page>/components/shared/<Name>.module.css`
+- Page-level layout styles stay in `<Page>.module.css`

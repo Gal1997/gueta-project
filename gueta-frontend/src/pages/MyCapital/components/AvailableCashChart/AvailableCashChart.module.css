@@ -1,0 +1,34 @@
+.chartCard {
+  padding: var(--mantine-spacing-lg);
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-lg);
+  background-color: var(--mantine-color-default);
+  box-shadow: var(--mantine-shadow-sm);
+}
+
+.cardTitle {
+  font-size: var(--mantine-font-size-md);
+  font-weight: 600;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.chartBody {
+  width: 100%;
+  height: 300px;
+  direction: ltr;
+}
+
+.chartBody :focus,
+.chartBody :focus-visible {
+  outline: none;
+}
+
+.chartBody .recharts-surface {
+  outline: none;
+}
+
+.emptyText {
+  color: var(--mantine-color-dimmed);
+  text-align: center;
+  padding: var(--mantine-spacing-md);
+}

@@ -8,7 +8,12 @@ import {
   type ReactNode,
 } from "react";
 import * as authApi from "./authApi";
-import type { LoginInput, RegisterInput, User } from "./authApi";
+import type {
+  LoginInput,
+  OnboardingInput,
+  RegisterInput,
+  User,
+} from "./authApi";
 
 interface AuthContextValue {
   user: User | null;
@@ -17,7 +22,8 @@ interface AuthContextValue {
   login: (input: LoginInput) => Promise<User>;
   loginWithGoogle: (accessToken: string) => Promise<User>;
   logout: () => Promise<void>;
-  completeOnboarding: () => Promise<User>;
+  completeOnboarding: (input: OnboardingInput) => Promise<User>;
+  skipOnboarding: () => Promise<User>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -67,15 +73,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
-  const completeOnboarding = useCallback(async () => {
+  const completeOnboarding = useCallback(async (input: OnboardingInput) => {
+    const nextUser = await authApi.submitOnboarding(input);
+    setUser(nextUser);
+    return nextUser;
+  }, []);
+
+  const skipOnboarding = useCallback(async () => {
     const nextUser = await authApi.completeOnboarding();
     setUser(nextUser);
     return nextUser;
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, register, login, loginWithGoogle, logout, completeOnboarding }),
-    [user, loading, register, login, loginWithGoogle, logout, completeOnboarding],
+    () => ({
+      user,
+      loading,
+      register,
+      login,
+      loginWithGoogle,
+      logout,
+      completeOnboarding,
+      skipOnboarding,
+    }),
+    [
+      user,
+      loading,
+      register,
+      login,
+      loginWithGoogle,
+      logout,
+      completeOnboarding,
+      skipOnboarding,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

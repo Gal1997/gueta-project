@@ -1,0 +1,11 @@
+.modalTitle {
+  font-weight: 600;
+}
+
+.dialog {
+  gap: var(--mantine-spacing-md);
+}
+
+.actions {
+  justify-content: flex-end;
+}

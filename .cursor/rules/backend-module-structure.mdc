@@ -1,0 +1,104 @@
+---
+description: Backend module structure, separation of concerns, and API conventions
+globs: gueta-backend/**
+alwaysApply: false
+---
+
+# Backend Module Conventions
+
+## Source layout
+
+```
+gueta-backend/src/
+  server.ts              # entry — listen, shutdown, process signals only
+  app.ts                 # app factory — plugins, global error handler, route registration
+  config/                # validated env + derived flags
+  db/                    # Prisma client singleton
+  lib/                   # cross-cutting utilities (no domain logic)
+  modules/<domain>/      # feature domains
+  types/                 # global TypeScript augmentations
+```
+
+No business logic in `server.ts`. No route handlers outside `modules/*/routes`.
+
+## Module folder structure
+
+Every domain under `src/modules/<domain>/` follows:
+
+```
+<domain>/
+  <domain>.routes.ts    # HTTP layer — parse, auth, respond
+  <domain>.service.ts   # business logic + Prisma access
+  <domain>.schemas.ts   # Zod request schemas + z.infer Input types
+  <domain>.types.ts     # optional — response DTOs for this domain
+  <domain>.utils.ts     # optional — pure helpers (no Fastify, no Prisma)
+```
+
+Examples: `auth`, `finance`, `onboarding`.
+
+## Separation of concerns
+
+| Layer | Owns | Must not |
+|-------|------|----------|
+| **routes** | `schema.parse()`, `preHandler`, status codes, response shape | Prisma calls, business rules |
+| **service** | DB access, transactions, ownership checks, domain logic | Fastify `request` / `reply` types |
+| **schemas** | Request validation, inferred `Input` types | DB queries, HTTP details |
+| **utils** | Pure functions (date math, filtering, formatting) | Prisma, Fastify, side effects |
+| **lib/** | Shared utilities (`HttpError`, session, mappers, shared schemas) | Domain-specific business rules |
+
+## Validation
+
+- **Body**: always `someSchema.parse(request.body)` in routes.
+- **Params / query**: Zod schemas — never `request.params as { id: string }`.
+- Reuse shared param schemas from `lib/schemas.ts` when applicable.
+- Export inferred types from schemas: `export type FooInput = z.infer<typeof fooSchema>`.
+
+## Errors
+
+- Expected failures → `throw new HttpError(statusCode, message)` in **service**.
+- Routes do not catch errors; `app.ts` maps `ZodError` → 400, `HttpError` → its code, unknown → 500.
+- User-facing messages should be consistent in language (Hebrew for this project).
+
+## Auth & ownership
+
+- Protected routes: `{ preHandler: [app.authenticate] }`.
+- `userId` always from `request.user.sub` — never from the request body.
+- Ownership checks (`assertXOwner`) live in **service**, before update/delete.
+
+## Database
+
+- All Prisma access through **service** (client singleton in `db/prisma.ts`).
+- Multi-write operations use `prisma.$transaction`.
+- Return **DTOs** to clients where shape matters (`PublicUser` via `lib/mappers.ts`); avoid leaking internal fields unintentionally.
+
+## Shared code placement
+
+| Kind | Where |
+|------|-------|
+| `HttpError`, password, Google client | `lib/` |
+| Session / cookie helpers | `lib/session.ts` |
+| Cross-module mappers (`toPublicUser`) | `lib/mappers.ts` + type in `auth.types.ts` |
+| Shared Zod shapes (income, expense, goal) | owning module schemas, re-exported by consumers |
+| Generic param schemas (`idParamSchema`) | `lib/schemas.ts` |
+| Env, Prisma client | `config/`, `db/` |
+
+Modules may import shared schemas/types from another module's **schemas** or **types** file — not from its **service**.
+
+## Response shape
+
+- Reads: `return { user }`, `return getFinanceData(...)`.
+- Creates: `reply.code(201).send({ user })`.
+- Deletes: `return { ok: true }`.
+- Errors (global handler): `{ message }` or `{ message, errors }` for Zod.
+
+## When to split a file
+
+- **service** > ~150 lines with mixed concerns → extract pure logic to `<domain>.utils.ts`.
+- **routes** with repeated HTTP helpers → extract to `lib/` (e.g. `lib/session.ts`).
+- **schemas** reused across modules → keep in the canonical module, re-export from consumer schemas.
+
+## Adding a new module
+
+1. Create `modules/<domain>/` with routes, service, schemas.
+2. Register in `app.ts`: `await app.register(<domain>Routes, { prefix: "/api/<domain>" })`.
+3. Add types/utils only when needed — do not scaffold empty files.

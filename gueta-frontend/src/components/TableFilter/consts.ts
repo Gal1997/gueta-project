@@ -1,0 +1,13 @@
+export const FILTER_SEARCH_PLACEHOLDER = "חיפוש...";
+export const FILTER_NO_RESULTS = "לא נמצאו תוצאות.";
+export const FILTER_TOGGLE_LABEL = "חיפוש";
+export const TABLE_ADD_LABEL = "הוסף";
+export const TABLE_ACTIONS_LABEL = "פעולות";
+export const ROW_EDIT_LABEL = "עריכה";
+export const ROW_DELETE_LABEL = "מחיקה";
+export const ROW_RECEIVE_LABEL = "קבלת כסף";
+export const ROW_WITHDRAW_LABEL = 'משיכה לעו"ש';
+export const ROW_CONTRIBUTION_LABEL = "הפרשה/משיכה";
+export const ROW_VALUATION_LABEL = "עדכון תשואה/מצב";
+export const ROW_LINK_LABEL = "עריכת קישור";
+export const ROW_DESCRIPTION_LABEL = "עריכת תיאור";

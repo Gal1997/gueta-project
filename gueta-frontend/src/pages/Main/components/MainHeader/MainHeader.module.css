@@ -1,0 +1,13 @@
+.header {
+  gap: 2px;
+  margin-bottom: var(--mantine-spacing-xl);
+}
+
+.title {
+  font-size: 28px;
+}
+
+.subtitle {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-dimmed);
+}
