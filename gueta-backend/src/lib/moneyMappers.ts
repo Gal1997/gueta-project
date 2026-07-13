@@ -5,8 +5,33 @@ import type {
   FutureMoney,
   Goal,
   Income,
+  SpendingCategory,
 } from "@prisma/client";
 import { fromMinorUnits } from "./money";
+
+export interface MappedSpendingCategory {
+  id: string;
+  name: string;
+  color: string;
+  isSystem: boolean;
+  sortOrder: number;
+}
+
+export type MappedExpense = ReturnType<typeof mapExpenseAmounts<Expense>> & {
+  kind: Expense["kind"];
+  categoryId: string;
+  category: MappedSpendingCategory;
+};
+
+function mapSpendingCategory(category: SpendingCategory): MappedSpendingCategory {
+  return {
+    id: category.id,
+    name: category.name,
+    color: category.color,
+    isSystem: category.isSystem,
+    sortOrder: category.sortOrder,
+  };
+}
 
 export function mapIncomeAmounts<T extends { amount: number }>(record: T): T {
   return { ...record, amount: fromMinorUnits(record.amount) };
@@ -78,8 +103,16 @@ export function mapIncome(record: Income) {
   return mapIncomeAmounts(record);
 }
 
-export function mapExpense(record: Expense) {
-  return mapExpenseAmounts(record);
+export function mapExpense(
+  record: Expense & { category: SpendingCategory },
+): MappedExpense {
+  const { category, ...expense } = record;
+  return {
+    ...mapExpenseAmounts(expense),
+    kind: expense.kind,
+    categoryId: expense.categoryId,
+    category: mapSpendingCategory(category),
+  };
 }
 
 export function mapGoal(record: Goal) {

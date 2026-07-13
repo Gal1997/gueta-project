@@ -68,23 +68,21 @@ export const EXPENSE_BOX_CONFIG = [
     title: "הוצאות חד פעמיות",
     variant: "once" as const,
     emptyText: "אין הוצאות חד-פעמיות החודש.",
-    filter: (expense: StoredExpense) => expense.recurrence === "once",
+    filter: (expense: StoredExpense) => expense.kind === "once",
   },
   {
     key: "fixed",
     title: "הוצאות קבועות",
     variant: "recurring" as const,
     emptyText: "אין הוצאות קבועות.",
-    filter: (expense: StoredExpense) =>
-      expense.recurrence === "recurring" && expense.category === "fixed",
+    filter: (expense: StoredExpense) => expense.kind === "fixed",
   },
   {
     key: "debt",
     title: "חוב",
     variant: "recurring" as const,
     emptyText: "אין חובות.",
-    filter: (expense: StoredExpense) =>
-      expense.recurrence === "recurring" && expense.category === "debt",
+    filter: (expense: StoredExpense) => expense.kind === "debt",
     showMonthlyCharge: true,
   },
 ];

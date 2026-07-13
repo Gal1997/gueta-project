@@ -21,7 +21,8 @@ export interface IncomeFormValues {
 
 export interface ExpenseFormValues {
   recurrence: string;
-  category: string;
+  kind: string;
+  categoryId: string;
   name: string;
   currency: string;
   amount: number | string;

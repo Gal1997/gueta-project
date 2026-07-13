@@ -5,6 +5,10 @@ import { convertToIls, getExchangeRates } from "../../lib/exchangeRates";
 import { fromMinorUnits } from "../../lib/money";
 import { mapExpense, mapGoal, mapIncome } from "../../lib/moneyMappers";
 import { adjustCheckingBalance } from "../capital/capital.utils";
+import {
+  assertCategoryBelongsToUser,
+  listCategories,
+} from "../categories/categories.service";
 import type { ExpenseInput, GoalInput, IncomeInput } from "./finance.schemas";
 import { INFINITE_REMAINING_PAYMENTS } from "./finance.constants";
 import type { FinanceData } from "./finance.types";
@@ -67,7 +71,7 @@ async function applyMonthlyRollover(
     const debtExpenses = await prisma.expense.findMany({
       where: {
         userId,
-        category: "debt",
+        kind: "debt",
         recurrence: "recurring",
         totalPayments: { gt: 0 },
       },
@@ -101,7 +105,7 @@ async function applyMonthlyRollover(
 
 export async function getFinanceData(userId: string): Promise<FinanceData> {
   const exchangeRates = await getExchangeRates();
-  const [incomes, goals] = await Promise.all([
+  const [incomes, goals, categories] = await Promise.all([
     prisma.income.findMany({
       where: { userId },
       orderBy: { createdAt: "asc" },
@@ -110,9 +114,11 @@ export async function getFinanceData(userId: string): Promise<FinanceData> {
       where: { userId },
       orderBy: { createdAt: "asc" },
     }),
+    listCategories(userId),
   ]);
   let expenses = await prisma.expense.findMany({
     where: { userId },
+    include: { category: true },
     orderBy: { createdAt: "asc" },
   });
 
@@ -130,6 +136,7 @@ export async function getFinanceData(userId: string): Promise<FinanceData> {
   if (monthsElapsed > 0) {
     expenses = await prisma.expense.findMany({
       where: { userId },
+      include: { category: true },
       orderBy: { createdAt: "asc" },
     });
   }
@@ -140,6 +147,7 @@ export async function getFinanceData(userId: string): Promise<FinanceData> {
       : monthlySavingsBefore;
 
   return {
+    categories,
     incomes: incomes.map(mapIncome),
     expenses: expenses.map(mapExpense),
     goals: goals.map(mapGoal),
@@ -319,8 +327,10 @@ export async function createExpense(
   data: ExpenseInput,
 ) {
   return prisma.$transaction(async (tx) => {
+    await assertCategoryBelongsToUser(userId, data.categoryId);
+
     const totalPayments =
-      data.category === "debt" &&
+      data.kind === "debt" &&
       data.recurrence === "recurring" &&
       data.remainingPayments > 0
         ? data.remainingPayments
@@ -333,6 +343,7 @@ export async function createExpense(
         currency: data.currency ?? "ILS",
         totalPayments,
       },
+      include: { category: true },
     });
     await syncCheckingForExpenseChange(tx, userId, null, data);
     return mapExpense(expense);
@@ -346,14 +357,17 @@ export async function updateExpense(
 ) {
   return prisma.$transaction(async (tx) => {
     const existing = await assertExpenseOwner(userId, id, tx);
+    await assertCategoryBelongsToUser(userId, data.categoryId);
+
     const expense = await tx.expense.update({
       where: { id },
       data: {
         ...data,
         currency: data.currency ?? "ILS",
         totalPayments:
-          existing.category === "debt" ? existing.totalPayments : null,
+          existing.kind === "debt" ? existing.totalPayments : null,
       },
+      include: { category: true },
     });
     await syncCheckingForExpenseChange(tx, userId, existing, data);
     return mapExpense(expense);

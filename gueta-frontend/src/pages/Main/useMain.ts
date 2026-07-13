@@ -26,7 +26,6 @@ export function useMain() {
   const [modal, setModal] = useState<ModalState | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<DeleteState | null>(null);
   const [deleting, setDeleting] = useState(false);
-
   const loadData = useCallback(async () => {
     const result = await getFinanceData();
     setData(result);
@@ -157,6 +156,7 @@ export function useMain() {
     incomes: summary.incomes,
     goals: summary.goals,
     orderedExpenseBoxes: summary.orderedExpenseBoxes,
+    categories: summary.categories,
     spendingData: summary.spendingData,
     savingsData: summary.savingsData,
     expenseTypeData: summary.expenseTypeData,

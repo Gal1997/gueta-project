@@ -8,7 +8,7 @@ import {
   updateIncome,
 } from "../../../auth/authApi";
 import type {
-  ExpenseCategory,
+  ExpenseKind,
   ExpenseRecurrence,
   IncomeType,
   CapitalCurrency,
@@ -83,8 +83,12 @@ export async function submitExpenseForm(
     form.setFieldError("recurrence", REQUIRED);
     valid = false;
   }
-  if (!values.category) {
-    form.setFieldError("category", REQUIRED);
+  if (!values.kind) {
+    form.setFieldError("kind", REQUIRED);
+    valid = false;
+  }
+  if (!values.categoryId) {
+    form.setFieldError("categoryId", REQUIRED);
     valid = false;
   }
   if (!values.name.trim()) {
@@ -113,7 +117,7 @@ export async function submitExpenseForm(
       }
     }
     if (
-      values.category === "debt" &&
+      values.kind === "debt" &&
       !values.monthlyChargeUseDefault &&
       isBlank(values.monthlyCharge)
     ) {
@@ -129,7 +133,8 @@ export async function submitExpenseForm(
 
   const payload = {
     recurrence: values.recurrence as ExpenseRecurrence,
-    category: values.category as ExpenseCategory,
+    kind: values.kind as ExpenseKind,
+    categoryId: values.categoryId,
     name: values.name.trim(),
     amount: Number(values.amount),
     currency: values.currency as CapitalCurrency,
@@ -142,7 +147,7 @@ export async function submitExpenseForm(
           remainingPayments: values.remainingPaymentsInfinite
             ? INFINITE_REMAINING_PAYMENTS
             : Number(values.remainingPayments),
-          ...(values.category === "debt"
+          ...(values.kind === "debt"
             ? {
                 monthlyCharge: resolveSubmitDebtMonthlyCharge(values),
               }

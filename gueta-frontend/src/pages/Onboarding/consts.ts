@@ -1,5 +1,5 @@
 import type {
-  ExpenseCategory,
+  ExpenseKind,
   ExpenseRecurrence,
   IncomeType,
   AvailableCashType,
@@ -36,7 +36,8 @@ export interface FutureMoneyRow {
 
 export interface ExpenseRow {
   recurrence: string;
-  category: string;
+  kind: string;
+  categoryId: string;
   name: string;
   currency: string;
   amount: number | string;
@@ -113,7 +114,8 @@ export const makeFutureMoney = (): FutureMoneyRow => ({
 
 export const makeExpense = (): ExpenseRow => ({
   recurrence: "recurring",
-  category: "",
+  kind: "fixed",
+  categoryId: "",
   name: "",
   currency: "ILS",
   amount: "",
@@ -159,7 +161,8 @@ export type OnboardingPayload = {
   }[];
   expenses: {
     recurrence: ExpenseRecurrence;
-    category: ExpenseCategory;
+    kind: ExpenseKind;
+    categoryId: string;
     name: string;
     amount: number;
     currency?: CapitalCurrency;

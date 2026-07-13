@@ -1,0 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik+Bubbles&display=swap");
+
+.demoButton {
+    font-family: "Rubik Bubbles", cursive;
+
+  letter-spacing: 0.1em;
+  font-weight: 300;
+  color: var(--mantine-color-grape-3);
+
+}

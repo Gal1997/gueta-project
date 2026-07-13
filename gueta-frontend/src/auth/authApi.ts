@@ -99,15 +99,27 @@ export async function completeOnboarding(): Promise<User> {
 }
 
 export type IncomeType = "salary" | "investments" | "other";
-export type ExpenseCategory =
-  | "debt"
-  | "fixed"
-  | "food"
-  | "shopping"
-  | "fuel"
-  | "other";
+export type ExpenseKind = "debt" | "fixed" | "once";
 export type ExpenseRecurrence = "recurring" | "once";
 export type CapitalCurrency = "ILS" | "USD" | "EUR";
+
+export interface SpendingCategory {
+  id: string;
+  name: string;
+  color: string;
+  isSystem: boolean;
+  sortOrder: number;
+}
+
+export interface CategoryInput {
+  name: string;
+  color?: string;
+}
+
+export interface CategoryUpdate {
+  name?: string;
+  color?: string;
+}
 
 export interface IncomeInput {
   type: IncomeType;
@@ -119,7 +131,8 @@ export interface IncomeInput {
 
 export interface ExpenseInput {
   recurrence: ExpenseRecurrence;
-  category: ExpenseCategory;
+  kind: ExpenseKind;
+  categoryId: string;
   name: string;
   amount: number;
   currency?: CapitalCurrency;
@@ -165,7 +178,9 @@ export interface StoredIncome {
 export interface StoredExpense {
   id: string;
   recurrence: ExpenseRecurrence;
-  category: ExpenseCategory;
+  kind: ExpenseKind;
+  categoryId: string;
+  category: SpendingCategory;
   name: string;
   amount: number;
   currency: CapitalCurrency;
@@ -185,6 +200,7 @@ export interface StoredGoal {
 }
 
 export interface FinanceData {
+  categories: SpendingCategory[];
   incomes: StoredIncome[];
   expenses: StoredExpense[];
   goals: StoredGoal[];
@@ -195,6 +211,38 @@ export interface FinanceData {
 
 export async function getFinanceData(): Promise<FinanceData> {
   return request<FinanceData>("/finance");
+}
+
+export async function getCategories(): Promise<SpendingCategory[]> {
+  const { categories } = await request<{ categories: SpendingCategory[] }>(
+    "/categories",
+  );
+  return categories;
+}
+
+export async function createCategory(
+  input: CategoryInput,
+): Promise<SpendingCategory> {
+  const { category } = await request<{ category: SpendingCategory }>(
+    "/categories",
+    { method: "POST", body: JSON.stringify(input) },
+  );
+  return category;
+}
+
+export async function updateCategory(
+  id: string,
+  input: CategoryUpdate,
+): Promise<SpendingCategory> {
+  const { category } = await request<{ category: SpendingCategory }>(
+    `/categories/${id}`,
+    { method: "PATCH", body: JSON.stringify(input) },
+  );
+  return category;
+}
+
+export async function deleteCategory(id: string): Promise<void> {
+  await request(`/categories/${id}`, { method: "DELETE" });
 }
 
 export async function createIncome(input: IncomeInput): Promise<StoredIncome> {

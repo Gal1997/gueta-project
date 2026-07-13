@@ -28,6 +28,8 @@ export default function Onboarding() {
     makeAvailableCash,
     makeInvestment,
     makeFutureMoney,
+    categories,
+    refreshCategories,
   } = useOnboarding();
 
   return (
@@ -86,10 +88,12 @@ export default function Onboarding() {
           <ExpensesSection
             form={form}
             values={values}
+            categories={categories}
             makeExpense={makeExpense}
             bumpFormVersion={bumpFormVersion}
             onContinue={() => handleContinue("expenses")}
             onListChange={bumpFormVersion}
+            onCategoriesChange={refreshCategories}
           />
           <GoalsSection
             form={form}

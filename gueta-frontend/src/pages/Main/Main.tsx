@@ -23,6 +23,7 @@ export default function Main() {
     boxPlacement,
     incomes,
     goals,
+    categories,
     exchangeRates,
     orderedExpenseBoxes,
     spendingData,
@@ -102,6 +103,7 @@ export default function Main() {
           initialIncome={modal.income}
           initialExpense={modal.expense}
           initialGoal={modal.goal}
+          categories={categories}
           onSaved={() => void handleSaved()}
         />
       )}

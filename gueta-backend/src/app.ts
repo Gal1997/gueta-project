@@ -15,6 +15,7 @@ import { authRoutes } from "./modules/auth/auth.routes";
 import { capitalRoutes } from "./modules/capital/capital.routes";
 import { financeRoutes } from "./modules/finance/finance.routes";
 import { onboardingRoutes } from "./modules/onboarding/onboarding.routes";
+import { categoryRoutes } from "./modules/categories/categories.routes";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -84,6 +85,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(authRoutes, { prefix: "/api/auth" });
   await app.register(onboardingRoutes, { prefix: "/api/onboarding" });
   await app.register(financeRoutes, { prefix: "/api/finance" });
+  await app.register(categoryRoutes, { prefix: "/api/categories" });
   await app.register(capitalRoutes, { prefix: "/api/capital" });
 
   return app;

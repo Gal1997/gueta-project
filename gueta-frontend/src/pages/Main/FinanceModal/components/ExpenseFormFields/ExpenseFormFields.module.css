@@ -13,3 +13,15 @@
   flex-shrink: 0;
   max-width: 11rem;
 }
+
+.manageLink {
+  margin-top: calc(var(--mantine-spacing-xs) * -1);
+  color: var(--mantine-color-anchor);
+  font-size: var(--mantine-font-size-sm);
+  cursor: pointer;
+  width: fit-content;
+}
+
+.manageLink:hover {
+  text-decoration: underline;
+}

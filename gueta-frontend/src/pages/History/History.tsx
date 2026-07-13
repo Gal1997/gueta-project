@@ -14,7 +14,7 @@ import { FILTER_NO_RESULTS } from "../../components/TableFilter/consts";
 import { useTableFilter } from "../../components/TableFilter/useTableFilter";
 import type { StoredExpense } from "../../auth/authApi";
 import {
-  EXPENSE_CATEGORY_LABELS,
+  EXPENSE_KIND_LABELS,
   EXPENSE_RECURRENCE_LABELS,
 } from "../../finance/constants";
 import {
@@ -29,7 +29,8 @@ import { useHistory } from "./useHistory";
 function getHistorySearchText(expense: StoredExpense): string {
   return [
     EXPENSE_RECURRENCE_LABELS[expense.recurrence] ?? expense.recurrence,
-    EXPENSE_CATEGORY_LABELS[expense.category] ?? expense.category,
+    EXPENSE_KIND_LABELS[expense.kind] ?? expense.kind,
+    expense.category.name,
     expense.name,
     expense.description,
     formatMoney(expense.amount, expense.currency),
@@ -105,10 +106,7 @@ export default function History() {
                           {EXPENSE_RECURRENCE_LABELS[expense.recurrence] ??
                             expense.recurrence}
                         </Table.Td>
-                        <Table.Td>
-                          {EXPENSE_CATEGORY_LABELS[expense.category] ??
-                            expense.category}
-                        </Table.Td>
+                        <Table.Td>{expense.category.name}</Table.Td>
                         <Table.Td>{expense.name}</Table.Td>
                         <Table.Td>
                           {formatMoney(expense.amount, expense.currency)}

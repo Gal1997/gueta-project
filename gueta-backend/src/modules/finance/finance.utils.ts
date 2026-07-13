@@ -60,7 +60,7 @@ export function debtMonthlyChargeFromTotal(
 
 /** Monthly budget impact for dashboards and charts. Debt uses stored חיוב החודש only. */
 export function monthlyExpenseAmount(expense: Expense): number {
-  if (expense.recurrence === "recurring" && expense.category === "debt") {
+  if (expense.recurrence === "recurring" && expense.kind === "debt") {
     return expense.monthlyCharge ?? 0;
   }
   return expense.amount;

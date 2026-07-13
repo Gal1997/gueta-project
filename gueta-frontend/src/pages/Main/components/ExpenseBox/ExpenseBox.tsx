@@ -15,7 +15,6 @@ import {
 } from "../../../../components/TableFilter/consts";
 import { useTableFilter } from "../../../../components/TableFilter/useTableFilter";
 import type { StoredExpense } from "../../../../auth/authApi";
-import { EXPENSE_CATEGORY_LABELS } from "../../../../finance/constants";
 import { formatMoney } from "../../../../finance/currency";
 import {
   formatExpenseBilling,
@@ -37,7 +36,7 @@ type ExpenseBoxProps = {
 
 function getExpenseSearchText(expense: StoredExpense): string {
   return [
-    EXPENSE_CATEGORY_LABELS[expense.category] ?? expense.category,
+    expense.category.name,
     expense.name,
     expense.description,
     formatMoney(expense.amount, expense.currency),
@@ -58,7 +57,6 @@ export function ExpenseBox({
   onEdit,
   onDelete,
 }: ExpenseBoxProps) {
-  const showCategory = variant === "once";
   const showRemaining = variant === "recurring";
 
   const {
@@ -81,18 +79,18 @@ export function ExpenseBox({
       </Group>
       {expenses.length > 0 ? (
         <>
-          {searchOpen && (
+          {searchOpen ? (
             <TableFilterBar search={search} onSearchChange={setSearch} />
-          )}
+          ) : null}
           {filteredItems.length > 0 ? (
             <Table.ScrollContainer
               className={shared.tableScroll}
-              minWidth={showMonthlyCharge ? 560 : showCategory ? 460 : 480}
+              minWidth={showMonthlyCharge ? 600 : 500}
             >
               <Table className={shared.table}>
                 <Table.Thead>
                   <Table.Tr>
-                    {showCategory && <Table.Th>קטגוריה</Table.Th>}
+                    <Table.Th>קטגוריה</Table.Th>
                     <Table.Th>שם</Table.Th>
                     <Table.Th>{showMonthlyCharge ? "סך חוב" : "סכום"}</Table.Th>
                     {showMonthlyCharge && (
@@ -113,12 +111,7 @@ export function ExpenseBox({
                 <Table.Tbody>
                   {filteredItems.map((expense) => (
                     <Table.Tr key={expense.id}>
-                      {showCategory && (
-                        <Table.Td>
-                          {EXPENSE_CATEGORY_LABELS[expense.category] ??
-                            expense.category}
-                        </Table.Td>
-                      )}
+                      <Table.Td>{expense.category.name}</Table.Td>
                       <Table.Td>{expense.name}</Table.Td>
                       <Table.Td>
                         {formatMoney(expense.amount, expense.currency)}

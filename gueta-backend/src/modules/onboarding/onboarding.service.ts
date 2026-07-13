@@ -2,6 +2,7 @@ import { prisma } from "../../db/prisma";
 import { getExchangeRates } from "../../lib/exchangeRates";
 import { toPublicUser } from "../../lib/mappers";
 import { currentMonthKey, sumAmountsInIls } from "../capital/capital.utils";
+import { ensureDefaultCategories } from "../categories/categories.service";
 import type { PublicUser } from "../auth/auth.types";
 import type { OnboardingInput } from "./onboarding.schemas";
 
@@ -12,6 +13,7 @@ export async function saveOnboarding(
   const exchangeRates = await getExchangeRates();
 
   const user = await prisma.$transaction(async (tx) => {
+    await ensureDefaultCategories(userId);
     if (data.availableCash.length > 0) {
       await tx.availableCash.createMany({
         data: data.availableCash.map((item) => ({
@@ -60,7 +62,7 @@ export async function saveOnboarding(
           userId,
           currency: expense.currency ?? "ILS",
           totalPayments:
-            expense.category === "debt" &&
+            expense.kind === "debt" &&
             expense.recurrence === "recurring" &&
             (expense.remainingPayments ?? 0) > 0
               ? expense.remainingPayments

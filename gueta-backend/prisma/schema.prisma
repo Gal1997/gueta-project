@@ -18,13 +18,10 @@ enum IncomeType {
   other
 }
 
-enum ExpenseCategory {
+enum ExpenseKind {
   debt
   fixed
-  food
-  shopping
-  fuel
-  other
+  once
 }
 
 enum ExpenseRecurrence {
@@ -45,13 +42,31 @@ model User {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
-  incomes  Income[]
-  expenses Expense[]
-  goals    Goal[]
+  incomes            Income[]
+  expenses           Expense[]
+  goals              Goal[]
+  spendingCategories SpendingCategory[]
   availableCash     AvailableCash[]
   capitalInvestments CapitalInvestment[]
   futureMoney       FutureMoney[]
   capitalSnapshots  CapitalMonthlySnapshot[]
+}
+
+model SpendingCategory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  color     String   @default("#748ffc")
+  isSystem  Boolean  @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  expenses Expense[]
+
+  @@unique([userId, name])
+  @@index([userId])
 }
 
 model Income {
@@ -69,10 +84,12 @@ model Income {
 }
 
 model Expense {
-  id                String          @id @default(cuid())
+  id                String            @id @default(cuid())
   userId            String
-  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category          ExpenseCategory
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind              ExpenseKind
+  categoryId        String
+  category          SpendingCategory  @relation(fields: [categoryId], references: [id])
   name              String
   amount            Int
   currency          Currency          @default(ILS)
@@ -82,9 +99,10 @@ model Expense {
   totalPayments     Int?
   monthlyCharge     Int?
   billingDate       DateTime
-  createdAt         DateTime        @default(now())
+  createdAt         DateTime          @default(now())
 
   @@index([userId])
+  @@index([categoryId])
 }
 
 model Goal {

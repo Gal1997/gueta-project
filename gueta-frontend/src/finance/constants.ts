@@ -4,13 +4,10 @@ export const INCOME_TYPE_LABELS: Record<string, string> = {
   other: "אחר",
 };
 
-export const EXPENSE_CATEGORY_LABELS: Record<string, string> = {
+export const EXPENSE_KIND_LABELS: Record<string, string> = {
   debt: "חוב",
-  fixed: "הוצאות קבועות",
-  food: "אוכל",
-  shopping: "קניות",
-  fuel: "דלק",
-  other: "אחר",
+  fixed: "הוצאה קבועה",
+  once: "חד פעמי",
 };
 
 export const EXPENSE_RECURRENCE_LABELS: Record<string, string> = {
@@ -24,25 +21,10 @@ export const INCOME_TYPES = [
   { value: "other", label: "אחר" },
 ];
 
-export const EXPENSE_RECURRING_CATEGORIES = [
+export const EXPENSE_RECURRING_KINDS = [
   { value: "debt", label: "חוב" },
-  { value: "fixed", label: "הוצאות קבועות" },
+  { value: "fixed", label: "הוצאה קבועה" },
 ];
-
-export const EXPENSE_ONCE_CATEGORIES = [
-  { value: "food", label: "אוכל" },
-  { value: "shopping", label: "קניות" },
-  { value: "fuel", label: "דלק" },
-  { value: "other", label: "אחר" },
-];
-
-export function categoriesForRecurrence(
-  recurrence: string,
-): { value: string; label: string }[] {
-  return recurrence === "once"
-    ? EXPENSE_ONCE_CATEGORIES
-    : EXPENSE_RECURRING_CATEGORIES;
-}
 
 export const EXPENSE_RECURRENCES = [
   { value: "recurring", label: "חוזר" },

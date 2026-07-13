@@ -12,13 +12,11 @@ export const incomeSchema = z.object({
   currency: currencySchema.optional(),
 });
 
-const RECURRING_CATEGORIES = ["debt", "fixed"] as const;
-const ONCE_CATEGORIES = ["food", "shopping", "fuel", "other"] as const;
-
 export const expenseSchema = z
   .object({
     recurrence: z.enum(["recurring", "once"]).default("recurring"),
-    category: z.enum(["debt", "fixed", "food", "shopping", "fuel", "other"]),
+    kind: z.enum(["debt", "fixed", "once"]),
+    categoryId: z.string().trim().min(1, "Category is required"),
     name: z.string().trim().min(1, "Name is required"),
     amount: moneyAmountSchema(),
     currency: currencySchema.optional(),
@@ -35,6 +33,22 @@ export const expenseSchema = z
     billingDate: z.coerce.date(),
   })
   .superRefine((data, ctx) => {
+    if (data.recurrence === "once" && data.kind !== "once") {
+      ctx.addIssue({
+        code: "custom",
+        message: "One-time expenses must use kind once",
+        path: ["kind"],
+      });
+    }
+
+    if (data.recurrence === "recurring" && data.kind === "once") {
+      ctx.addIssue({
+        code: "custom",
+        message: "Recurring expenses must be debt or fixed",
+        path: ["kind"],
+      });
+    }
+
     if (data.recurrence === "recurring" && data.remainingPayments === undefined) {
       ctx.addIssue({
         code: "custom",
@@ -46,22 +60,12 @@ export const expenseSchema = z
     if (
       data.recurrence === "recurring" &&
       data.remainingPayments === INFINITE_REMAINING_PAYMENTS &&
-      data.category !== "fixed"
+      data.kind !== "fixed"
     ) {
       ctx.addIssue({
         code: "custom",
         message: "Infinite remaining payments are only allowed for fixed expenses",
         path: ["remainingPayments"],
-      });
-    }
-
-    const allowed =
-      data.recurrence === "once" ? ONCE_CATEGORIES : RECURRING_CATEGORIES;
-    if (!(allowed as readonly string[]).includes(data.category)) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Category is not valid for this expense type",
-        path: ["category"],
       });
     }
   })
@@ -71,11 +75,10 @@ export const expenseSchema = z
 
     let monthlyCharge: number | null = null;
     if (
-      data.category === "debt" &&
+      data.kind === "debt" &&
       data.recurrence === "recurring" &&
       remainingPayments > 0
     ) {
-      // On create, remaining equals total; service stores totalPayments separately.
       monthlyCharge =
         data.monthlyCharge ??
         Math.round(data.amount / remainingPayments);

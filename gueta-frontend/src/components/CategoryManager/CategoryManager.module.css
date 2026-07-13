@@ -1,0 +1,65 @@
+.stack {
+  gap: var(--mantine-spacing-md);
+}
+
+.addRow {
+  align-items: flex-end;
+  flex-wrap: nowrap;
+}
+
+.addInput {
+  flex: 1;
+}
+
+.list {
+  gap: var(--mantine-spacing-xs);
+}
+
+.row {
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding: var(--mantine-spacing-xs) 0;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: var(--mantine-radius-sm);
+  flex-shrink: 0;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+}
+
+.editInput {
+  flex: 1;
+}
+
+.actions {
+  flex-shrink: 0;
+}
+
+.colorInput {
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+  background: transparent;
+}
+
+.colorInput:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.error {
+  color: var(--mantine-color-red-4);
+  font-size: var(--mantine-font-size-sm);
+}

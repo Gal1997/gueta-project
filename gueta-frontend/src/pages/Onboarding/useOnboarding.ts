@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { useAuth } from "../../auth/AuthContext";
+import type { SpendingCategory } from "../../auth/authApi";
+import { getCategories } from "../../auth/authApi";
 import {
   ERRORS,
   INITIAL_OPEN_SECTIONS,
@@ -27,6 +29,20 @@ export function useOnboarding() {
   const [formVersion, setFormVersion] = useState(0);
   const [openSections, setOpenSections] = useState<string[]>(INITIAL_OPEN_SECTIONS);
   const [submitError, setSubmitError] = useState("");
+  const [categories, setCategories] = useState<SpendingCategory[]>([]);
+
+  const refreshCategories = useCallback(async () => {
+    try {
+      const next = await getCategories();
+      setCategories(next);
+    } catch {
+      setCategories([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshCategories();
+  }, [refreshCategories]);
 
   const form = useForm<OnboardingFormValues>({
     mode: "uncontrolled",
@@ -139,5 +155,7 @@ export function useOnboarding() {
     makeGoal,
     makeInvestment,
     makeFutureMoney,
+    categories,
+    refreshCategories,
   };
 }

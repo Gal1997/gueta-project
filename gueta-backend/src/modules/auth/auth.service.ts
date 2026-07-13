@@ -3,6 +3,7 @@ import { HttpError } from "../../lib/errors";
 import { fetchGoogleProfile } from "../../lib/google";
 import { toPublicUser } from "../../lib/mappers";
 import { hashPassword, verifyPassword } from "../../lib/password";
+import { seedDefaultCategories } from "../categories/categories.service";
 import type { LoginInput, RegisterInput } from "./auth.schemas";
 import type { PublicUser } from "./auth.types";
 
@@ -17,6 +18,8 @@ export async function registerUser(input: RegisterInput): Promise<PublicUser> {
   const user = await prisma.user.create({
     data: { email, name: input.name, passwordHash, provider: "password" },
   });
+
+  await seedDefaultCategories(user.id);
 
   return toPublicUser(user);
 }
@@ -61,6 +64,8 @@ export async function loginWithGoogle(accessToken: string): Promise<PublicUser> 
       googleId: profile.googleId,
     },
   });
+
+  await seedDefaultCategories(user.id);
 
   return toPublicUser(user);
 }

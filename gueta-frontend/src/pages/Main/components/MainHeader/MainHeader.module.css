@@ -1,6 +1,13 @@
 .header {
-  gap: 2px;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--mantine-spacing-md);
   margin-bottom: var(--mantine-spacing-xl);
+}
+
+.titles {
+  gap: 2px;
 }
 
 .title {

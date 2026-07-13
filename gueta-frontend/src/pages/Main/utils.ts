@@ -113,14 +113,30 @@ export function buildSpendingData(
   expenses: StoredExpense[],
   rates: Record<CapitalCurrency, number> = DEFAULT_RATES,
 ): ChartEntry[] {
-  return expenses.map((expense) => ({
-    name: expense.name,
-    value: convertToIls(
+  const totals = new Map<string, { name: string; value: number; color: string }>();
+
+  for (const expense of expenses) {
+    const key = expense.categoryId;
+    const amount = convertToIls(
       monthlyExpenseAmount(expense),
       expense.currency,
       rates,
-    ),
-  }));
+    );
+    const existing = totals.get(key);
+    if (existing) {
+      existing.value += amount;
+    } else {
+      totals.set(key, {
+        name: expense.category.name,
+        value: amount,
+        color: expense.category.color,
+      });
+    }
+  }
+
+  return [...totals.values()]
+    .filter((entry) => entry.value > 0)
+    .sort((a, b) => b.value - a.value);
 }
 
 export function buildSavingsData(
@@ -190,6 +206,7 @@ export function computeFinanceSummary(data: FinanceData | null) {
   const accumulated = data?.accumulatedSavings ?? 0;
 
   return {
+    categories: data?.categories ?? [],
     incomes,
     goals,
     activeExpenses,

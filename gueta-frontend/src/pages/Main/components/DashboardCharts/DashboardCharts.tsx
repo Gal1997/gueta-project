@@ -46,7 +46,7 @@ export function DashboardCharts({
                   {spendingData.map((entry, index) => (
                     <Cell
                       key={entry.name}
-                      fill={PIE_PALETTE[index % PIE_PALETTE.length]}
+                      fill={entry.color ?? PIE_PALETTE[index % PIE_PALETTE.length]}
                     />
                   ))}
                 </Pie>

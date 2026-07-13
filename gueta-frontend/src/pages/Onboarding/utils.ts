@@ -1,6 +1,6 @@
 import type { UseFormReturnType } from "@mantine/form";
 import type {
-  ExpenseCategory,
+  ExpenseKind,
   ExpenseRecurrence,
   IncomeType,
   AvailableCashType,
@@ -176,7 +176,8 @@ function validateExpenses(
   for (const [index, row] of values.expenses.entries()) {
     const isRecurring = row.recurrence !== "once";
     const empty =
-      !row.category &&
+      !row.categoryId &&
+      !row.kind &&
       !row.name.trim() &&
       isBlank(row.amount) &&
       !row.description.trim() &&
@@ -192,8 +193,12 @@ function validateExpenses(
       form.setFieldError(`expenses.${index}.recurrence`, REQUIRED);
       valid = false;
     }
-    if (!row.category) {
-      form.setFieldError(`expenses.${index}.category`, REQUIRED);
+    if (!row.kind) {
+      form.setFieldError(`expenses.${index}.kind`, REQUIRED);
+      valid = false;
+    }
+    if (!row.categoryId) {
+      form.setFieldError(`expenses.${index}.categoryId`, REQUIRED);
       valid = false;
     }
     if (!row.name.trim()) {
@@ -209,7 +214,7 @@ function validateExpenses(
         form.setFieldError(`expenses.${index}.remainingPayments`, REQUIRED);
         valid = false;
       }
-      if (row.category === "debt" && isBlank(row.monthlyCharge)) {
+      if (row.kind === "debt" && isBlank(row.monthlyCharge)) {
         form.setFieldError(`expenses.${index}.monthlyCharge`, REQUIRED);
         valid = false;
       }
@@ -236,7 +241,8 @@ function validateExpenses(
     }
     items.push({
       recurrence: row.recurrence as ExpenseRecurrence,
-      category: row.category as ExpenseCategory,
+      kind: row.kind as ExpenseKind,
+      categoryId: row.categoryId,
       name: row.name.trim(),
       amount: Number(row.amount),
       currency: (row.currency || "ILS") as CapitalCurrency,
@@ -249,7 +255,7 @@ function validateExpenses(
             remainingPayments: row.remainingPaymentsInfinite
               ? INFINITE_REMAINING_PAYMENTS
               : Number(row.remainingPayments),
-            ...(row.category === "debt"
+            ...(row.kind === "debt"
               ? {
                   monthlyCharge: Number(row.monthlyCharge),
                 }

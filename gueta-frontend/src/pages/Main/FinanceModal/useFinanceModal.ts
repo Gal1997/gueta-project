@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
 import type {
+  SpendingCategory,
   StoredExpense,
   StoredGoal,
   StoredIncome,
@@ -26,6 +27,7 @@ interface UseFinanceModalParams {
   initialIncome?: StoredIncome | null;
   initialExpense?: StoredExpense | null;
   initialGoal?: StoredGoal | null;
+  categories: SpendingCategory[];
   onSaved: () => void;
   onClose: () => void;
 }
@@ -38,6 +40,7 @@ export function useFinanceModal({
   initialIncome,
   initialExpense,
   initialGoal,
+  categories,
   onSaved,
   onClose,
 }: UseFinanceModalParams) {
@@ -58,7 +61,8 @@ export function useFinanceModal({
   const expenseForm = useForm({
     initialValues: {
       recurrence: "recurring",
-      category: "",
+      kind: "fixed",
+      categoryId: "",
       name: "",
       currency: "ILS",
       amount: "" as number | string,
@@ -105,7 +109,8 @@ export function useFinanceModal({
       setExpenseRecurrence(recurrence);
       expenseForm.setValues({
         recurrence,
-        category: initialExpense?.category ?? "",
+        kind: initialExpense?.kind ?? (recurrence === "once" ? "once" : "fixed"),
+        categoryId: initialExpense?.categoryId ?? categories[0]?.id ?? "",
         name: initialExpense?.name ?? "",
         currency: initialExpense?.currency ?? "ILS",
         amount: initialExpense?.amount ?? "",
@@ -141,7 +146,7 @@ export function useFinanceModal({
         targetDate: initialGoal?.targetDate ?? null,
       });
     }
-  }, [opened, entity, mode, initialIncome, initialExpense, initialGoal]);
+  }, [opened, entity, mode, initialIncome, initialExpense, initialGoal, categories]);
 
   async function handleSubmit() {
     setError("");
@@ -177,7 +182,7 @@ export function useFinanceModal({
     const next = value ?? "recurring";
     setExpenseRecurrence(next);
     expenseForm.setFieldValue("recurrence", next);
-    expenseForm.setFieldValue("category", "");
+    expenseForm.setFieldValue("kind", next === "once" ? "once" : "fixed");
     expenseForm.setFieldValue("remainingPaymentsInfinite", false);
     expenseForm.setFieldValue("monthlyChargeUseDefault", true);
     expenseForm.setFieldValue("totalPayments", "");

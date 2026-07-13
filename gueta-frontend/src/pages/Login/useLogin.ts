@@ -53,12 +53,31 @@ export function useLogin() {
     }
   }
 
+  async function handleDemoLogin() {
+    setSubmitting(true);
+    try {
+      const user = await login({
+        email: "avi@avi.com",
+        password: "123456",
+      });
+      navigateAfterAuth(navigate, user);
+    } catch (error) {
+      form.setErrors({
+        email: " ",
+        password: error instanceof Error ? error.message : ERRORS.loginFailed,
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return {
     form,
     submitting,
     googleLoading,
     googleError,
     handleLogin,
+    handleDemoLogin,
     handleGoogle,
   };
 }

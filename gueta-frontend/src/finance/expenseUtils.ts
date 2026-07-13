@@ -64,14 +64,14 @@ export function defaultDebtMonthlyCharge(
 
 type DebtMonthlyChargeSource = Pick<
   StoredExpense,
-  "category" | "amount" | "totalPayments" | "remainingPayments" | "monthlyCharge"
+  "kind" | "amount" | "totalPayments" | "remainingPayments" | "monthlyCharge"
 >;
 
 /** Whether stored חיוב החודש matches the default (total ÷ total payments). */
 export function isDebtMonthlyChargeDefault(
   expense: DebtMonthlyChargeSource | null | undefined,
 ): boolean {
-  if (!expense || expense.category !== "debt") return true;
+  if (!expense || expense.kind !== "debt") return true;
   const totalPayments = debtTotalPayments(expense);
   if (totalPayments <= 0) return true;
 
@@ -90,7 +90,7 @@ export function isDebtMonthlyChargeDefault(
 export function debtMonthlyChargeForForm(
   expense: DebtMonthlyChargeSource | null | undefined,
 ): number | string {
-  if (!expense || expense.category !== "debt") return "";
+  if (!expense || expense.kind !== "debt") return "";
   const totalPayments = debtTotalPayments(expense);
   if (totalPayments <= 0) return "";
 
@@ -102,7 +102,7 @@ export function debtMonthlyChargeForForm(
 
 /** Monthly budget impact for dashboards and charts. Debt uses stored חיוב החודש only. */
 export function monthlyExpenseAmount(expense: StoredExpense): number {
-  if (expense.recurrence === "recurring" && expense.category === "debt") {
+  if (expense.recurrence === "recurring" && expense.kind === "debt") {
     return expense.monthlyCharge ?? 0;
   }
   return expense.amount;

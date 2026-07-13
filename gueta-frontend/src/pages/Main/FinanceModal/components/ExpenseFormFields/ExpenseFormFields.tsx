@@ -1,11 +1,13 @@
-import { Checkbox, Input, NumberInput, Select, TextInput } from "@mantine/core";
+import { Checkbox, Input, NumberInput, Select, Text, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import type { UseFormReturnType } from "@mantine/form";
+import type { SpendingCategory } from "../../../../../auth/authApi";
 import { AmountCurrencyFields } from "../../../../../components/AmountCurrencyFields/AmountCurrencyFields";
 import { RemainingPaymentsLabel } from "../../../../../components/RemainingPaymentsLabel/RemainingPaymentsLabel";
+import { categoriesToSelectData } from "../../../../../finance/categoryUtils";
 import {
-  categoriesForRecurrence,
   EXPENSE_RECURRENCES,
+  EXPENSE_RECURRING_KINDS,
 } from "../../../../../finance/constants";
 import {
   debtTotalPayments,
@@ -16,7 +18,7 @@ import type { ExpenseFormValues } from "../../consts";
 import classes from "./ExpenseFormFields.module.css";
 
 type DebtMonthlyChargeOverrides = {
-  category?: string;
+  kind?: string;
   amount?: number | string;
   totalPayments?: number | string;
 };
@@ -27,17 +29,13 @@ function syncDebtMonthlyCharge(
 ) {
   if (!form.values.monthlyChargeUseDefault) return;
 
-  const category = overrides.category ?? form.values.category;
+  const kind = overrides.kind ?? form.values.kind;
   const amount = Number(overrides.amount ?? form.values.amount);
   const totalPayments = debtTotalPayments({
     totalPayments: overrides.totalPayments ?? form.values.totalPayments,
     remainingPayments: form.values.remainingPayments,
   });
-  if (
-    category === "debt" &&
-    Number.isFinite(amount) &&
-    totalPayments > 0
-  ) {
+  if (kind === "debt" && Number.isFinite(amount) && totalPayments > 0) {
     form.setFieldValue(
       "monthlyCharge",
       defaultDebtMonthlyCharge(amount, totalPayments),
@@ -50,7 +48,9 @@ type ExpenseFormFieldsProps = {
   expenseRecurrence: string;
   isRecurringExpense: boolean;
   mode: "add" | "edit";
+  categories: SpendingCategory[];
   onRecurrenceChange: (value: string | null) => void;
+  onManageCategories?: () => void;
 };
 
 export function ExpenseFormFields({
@@ -58,10 +58,13 @@ export function ExpenseFormFields({
   expenseRecurrence,
   isRecurringExpense,
   mode,
+  categories,
   onRecurrenceChange,
+  onManageCategories,
 }: ExpenseFormFieldsProps) {
-  const isFixedCategory = form.values.category === "fixed";
-  const isDebtCategory = form.values.category === "debt";
+  const isFixedKind = form.values.kind === "fixed";
+  const isDebtKind = form.values.kind === "debt";
+  const categoryOptions = categoriesToSelectData(categories);
 
   return (
     <>
@@ -73,32 +76,46 @@ export function ExpenseFormFields({
         error={form.errors.recurrence}
         onChange={onRecurrenceChange}
       />
+      {isRecurringExpense ? (
+        <Select
+          label="סוג חוזר"
+          placeholder="בחרו"
+          data={EXPENSE_RECURRING_KINDS}
+          {...form.getInputProps("kind")}
+          onChange={(value) => {
+            form.setFieldValue("kind", value ?? "");
+            if (value !== "fixed") {
+              form.setFieldValue("remainingPaymentsInfinite", false);
+            }
+            if (value === "debt") {
+              form.setFieldValue("monthlyChargeUseDefault", true);
+              if (mode === "add") {
+                form.setFieldValue(
+                  "totalPayments",
+                  form.values.remainingPayments,
+                );
+              }
+              syncDebtMonthlyCharge(form, { kind: value });
+            } else {
+              form.setFieldValue("monthlyChargeUseDefault", false);
+              form.setFieldValue("totalPayments", "");
+              form.setFieldValue("monthlyCharge", "");
+            }
+          }}
+        />
+      ) : null}
       <Select
         label="קטגוריה"
         placeholder="בחרו"
-        data={categoriesForRecurrence(expenseRecurrence)}
-        {...form.getInputProps("category")}
-        onChange={(value) => {
-          form.setFieldValue("category", value ?? "");
-          if (value !== "fixed") {
-            form.setFieldValue("remainingPaymentsInfinite", false);
-          }
-          if (value === "debt") {
-            form.setFieldValue("monthlyChargeUseDefault", true);
-            if (mode === "add") {
-              form.setFieldValue(
-                "totalPayments",
-                form.values.remainingPayments,
-              );
-            }
-            syncDebtMonthlyCharge(form, { category: value });
-          } else {
-            form.setFieldValue("monthlyChargeUseDefault", false);
-            form.setFieldValue("totalPayments", "");
-            form.setFieldValue("monthlyCharge", "");
-          }
-        }}
+        data={categoryOptions}
+        searchable
+        {...form.getInputProps("categoryId")}
       />
+      {onManageCategories ? (
+        <Text className={classes.manageLink} onClick={onManageCategories}>
+          ניהול קטגוריות
+        </Text>
+      ) : null}
       <TextInput
         label="שם"
         placeholder="משכנתא"
@@ -108,9 +125,9 @@ export function ExpenseFormFields({
         form={form}
         currencyField="currency"
         amountField="amount"
-        amountLabel={isDebtCategory ? "סך חוב" : "סכום"}
+        amountLabel={isDebtKind ? "סך חוב" : "סכום"}
         onAmountChange={(value) => {
-          if (isDebtCategory) {
+          if (isDebtKind) {
             syncDebtMonthlyCharge(form, { amount: value });
           }
         }}
@@ -122,7 +139,7 @@ export function ExpenseFormFields({
       />
       {isRecurringExpense ? (
         <>
-          {isFixedCategory ? (
+          {isFixedKind ? (
             <Checkbox
               label="אין סוף"
               description="הוצאה קבועה ללא יעד סופי (למשל מנוי)"
@@ -151,16 +168,16 @@ export function ExpenseFormFields({
               onChange={(value) => {
                 const next = value ?? "";
                 form.setFieldValue("remainingPayments", next);
-                if (isDebtCategory && mode === "add") {
+                if (isDebtKind && mode === "add") {
                   form.setFieldValue("totalPayments", next);
                   syncDebtMonthlyCharge(form, { totalPayments: next });
-                } else if (isDebtCategory) {
+                } else if (isDebtKind) {
                   syncDebtMonthlyCharge(form);
                 }
               }}
             />
           </Input.Wrapper>
-          {isDebtCategory ? (
+          {isDebtKind ? (
             <Input.Wrapper
               label="חיוב החודש"
               description={

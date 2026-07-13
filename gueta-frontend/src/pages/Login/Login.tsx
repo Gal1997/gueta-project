@@ -15,11 +15,12 @@ import {
 } from "@mantine/core";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import classes from "../authShared.module.css";
+import loginClasses from "./Login.module.css";
 import { BRAND_LOGO, BRAND_NAME, LOGIN_COPY } from "./consts";
 import { useLogin } from "./useLogin";
 
 export default function Login() {
-  const { form, submitting, googleLoading, googleError, handleLogin, handleGoogle } =
+  const { form, submitting, googleLoading, googleError, handleLogin, handleDemoLogin, handleGoogle } =
     useLogin();
 
   return (
@@ -58,6 +59,16 @@ export default function Login() {
 
           <Button type="submit" className={classes.blockButton} loading={submitting}>
             {LOGIN_COPY.submit}
+          </Button>
+
+          <Button
+            type="button"
+            variant="default"
+            className={loginClasses.demoButton}
+            loading={submitting}
+            onClick={() => void handleDemoLogin()}
+          >
+            כניסת דמו עם אבי
           </Button>
         </Box>
 
