@@ -199,8 +199,29 @@ export interface StoredGoal {
   targetDate: string;
 }
 
+export interface StoredCategoryAllocation {
+  id: string;
+  categoryId: string;
+  category: SpendingCategory;
+  amount: number;
+  currency: CapitalCurrency;
+}
+
+export interface CategoryAllocationInput {
+  categoryId: string;
+  amount: number;
+  currency?: CapitalCurrency;
+}
+
+export interface CategoryAllocationUpdate {
+  categoryId?: string;
+  amount?: number;
+  currency?: CapitalCurrency;
+}
+
 export interface FinanceData {
   categories: SpendingCategory[];
+  allocations: StoredCategoryAllocation[];
   incomes: StoredIncome[];
   expenses: StoredExpense[];
   goals: StoredGoal[];
@@ -321,6 +342,31 @@ export async function updateGoal(
 
 export async function deleteGoal(id: string): Promise<void> {
   await request(`/finance/goals/${id}`, { method: "DELETE" });
+}
+
+export async function createCategoryAllocation(
+  input: CategoryAllocationInput,
+): Promise<StoredCategoryAllocation> {
+  const { allocation } = await request<{ allocation: StoredCategoryAllocation }>(
+    "/finance/allocations",
+    { method: "POST", body: JSON.stringify(input) },
+  );
+  return allocation;
+}
+
+export async function updateCategoryAllocation(
+  id: string,
+  input: CategoryAllocationUpdate,
+): Promise<StoredCategoryAllocation> {
+  const { allocation } = await request<{ allocation: StoredCategoryAllocation }>(
+    `/finance/allocations/${id}`,
+    { method: "PATCH", body: JSON.stringify(input) },
+  );
+  return allocation;
+}
+
+export async function deleteCategoryAllocation(id: string): Promise<void> {
+  await request(`/finance/allocations/${id}`, { method: "DELETE" });
 }
 
 export type AvailableCashType =

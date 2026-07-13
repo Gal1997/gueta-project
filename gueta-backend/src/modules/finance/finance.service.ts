@@ -9,6 +9,7 @@ import {
   assertCategoryBelongsToUser,
   listCategories,
 } from "../categories/categories.service";
+import { listCategoryAllocations } from "./allocations.service";
 import type { ExpenseInput, GoalInput, IncomeInput } from "./finance.schemas";
 import { INFINITE_REMAINING_PAYMENTS } from "./finance.constants";
 import type { FinanceData } from "./finance.types";
@@ -105,7 +106,7 @@ async function applyMonthlyRollover(
 
 export async function getFinanceData(userId: string): Promise<FinanceData> {
   const exchangeRates = await getExchangeRates();
-  const [incomes, goals, categories] = await Promise.all([
+  const [incomes, goals, categories, allocations] = await Promise.all([
     prisma.income.findMany({
       where: { userId },
       orderBy: { createdAt: "asc" },
@@ -115,6 +116,7 @@ export async function getFinanceData(userId: string): Promise<FinanceData> {
       orderBy: { createdAt: "asc" },
     }),
     listCategories(userId),
+    listCategoryAllocations(userId),
   ]);
   let expenses = await prisma.expense.findMany({
     where: { userId },
@@ -148,6 +150,7 @@ export async function getFinanceData(userId: string): Promise<FinanceData> {
 
   return {
     categories,
+    allocations,
     incomes: incomes.map(mapIncome),
     expenses: expenses.map(mapExpense),
     goals: goals.map(mapGoal),

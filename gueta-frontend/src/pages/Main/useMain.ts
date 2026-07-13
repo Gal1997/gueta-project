@@ -157,6 +157,8 @@ export function useMain() {
     goals: summary.goals,
     orderedExpenseBoxes: summary.orderedExpenseBoxes,
     categories: summary.categories,
+    allocations: summary.allocations,
+    categorySpentMap: summary.categorySpentMap,
     spendingData: summary.spendingData,
     savingsData: summary.savingsData,
     expenseTypeData: summary.expenseTypeData,

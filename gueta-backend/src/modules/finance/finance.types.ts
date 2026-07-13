@@ -1,9 +1,13 @@
 import type { Goal, Income, SpendingCategory } from "@prisma/client";
 import type { ExchangeRates } from "../../lib/exchangeRates";
-import type { MappedExpense } from "../../lib/moneyMappers";
+import type {
+  MappedCategoryAllocation,
+  MappedExpense,
+} from "../../lib/moneyMappers";
 
 export interface FinanceData {
   categories: SpendingCategory[];
+  allocations: MappedCategoryAllocation[];
   incomes: Income[];
   expenses: MappedExpense[];
   goals: Goal[];

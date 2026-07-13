@@ -1,10 +1,17 @@
 import type { FastifyInstance } from "fastify";
 import { idParamSchema } from "../../lib/schemas";
 import {
+  categoryAllocationSchema,
+  categoryAllocationUpdateSchema,
   expenseSchema,
   goalSchema,
   incomeSchema,
 } from "./finance.schemas";
+import {
+  createCategoryAllocation,
+  deleteCategoryAllocation,
+  updateCategoryAllocation,
+} from "./allocations.service";
 import {
   createExpense,
   createGoal,
@@ -96,6 +103,41 @@ export async function financeRoutes(app: FastifyInstance): Promise<void> {
     async (request) => {
       const { id } = idParamSchema.parse(request.params);
       await deleteGoal(request.user.sub, id);
+      return { ok: true };
+    },
+  );
+
+  app.post(
+    "/allocations",
+    { preHandler: [app.authenticate] },
+    async (request) => {
+      const body = categoryAllocationSchema.parse(request.body);
+      const allocation = await createCategoryAllocation(request.user.sub, body);
+      return { allocation };
+    },
+  );
+
+  app.patch(
+    "/allocations/:id",
+    { preHandler: [app.authenticate] },
+    async (request) => {
+      const { id } = idParamSchema.parse(request.params);
+      const body = categoryAllocationUpdateSchema.parse(request.body);
+      const allocation = await updateCategoryAllocation(
+        request.user.sub,
+        id,
+        body,
+      );
+      return { allocation };
+    },
+  );
+
+  app.delete(
+    "/allocations/:id",
+    { preHandler: [app.authenticate] },
+    async (request) => {
+      const { id } = idParamSchema.parse(request.params);
+      await deleteCategoryAllocation(request.user.sub, id);
       return { ok: true };
     },
   );

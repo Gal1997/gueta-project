@@ -46,6 +46,7 @@ model User {
   expenses           Expense[]
   goals              Goal[]
   spendingCategories SpendingCategory[]
+  categoryAllocations CategoryAllocation[]
   availableCash     AvailableCash[]
   capitalInvestments CapitalInvestment[]
   futureMoney       FutureMoney[]
@@ -64,6 +65,7 @@ model SpendingCategory {
   updatedAt DateTime @updatedAt
 
   expenses Expense[]
+  allocations CategoryAllocation[]
 
   @@unique([userId, name])
   @@index([userId])
@@ -103,6 +105,21 @@ model Expense {
 
   @@index([userId])
   @@index([categoryId])
+}
+
+model CategoryAllocation {
+  id         String           @id @default(cuid())
+  userId     String
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   SpendingCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  amount     Int
+  currency   Currency         @default(ILS)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@unique([userId, categoryId])
+  @@index([userId])
 }
 
 model Goal {

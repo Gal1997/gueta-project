@@ -101,3 +101,22 @@ export const goalSchema = z.object({
 export type IncomeInput = z.infer<typeof incomeSchema>;
 export type ExpenseInput = z.infer<typeof expenseSchema>;
 export type GoalInput = z.infer<typeof goalSchema>;
+
+export const categoryAllocationSchema = z.object({
+  categoryId: z.string().trim().min(1, "Category is required"),
+  amount: moneyAmountSchema(),
+  currency: currencySchema.optional(),
+});
+
+export const categoryAllocationUpdateSchema = categoryAllocationSchema.partial().refine(
+  (data) =>
+    data.categoryId !== undefined ||
+    data.amount !== undefined ||
+    data.currency !== undefined,
+  { message: "At least one field is required" },
+);
+
+export type CategoryAllocationInput = z.infer<typeof categoryAllocationSchema>;
+export type CategoryAllocationUpdate = z.infer<
+  typeof categoryAllocationUpdateSchema
+>;

@@ -1,4 +1,6 @@
 import { Box, Text } from "@mantine/core";
+import type { ExchangeRates, SpendingCategory, StoredCategoryAllocation } from "../../../../auth/authApi";
+import { CategoryBudgetCard } from "../CategoryBudgetCard/CategoryBudgetCard";
 import {
   Bar,
   BarChart,
@@ -20,12 +22,22 @@ type DashboardChartsProps = {
   spendingData: ChartEntry[];
   savingsData: ChartEntry[];
   expenseTypeData: ChartEntry[];
+  allocations: StoredCategoryAllocation[];
+  categories: SpendingCategory[];
+  categorySpentMap: Record<string, number>;
+  exchangeRates: ExchangeRates | undefined;
+  onAllocationsChanged: () => void | Promise<void>;
 };
 
 export function DashboardCharts({
   spendingData,
   savingsData,
   expenseTypeData,
+  allocations,
+  categories,
+  categorySpentMap,
+  exchangeRates,
+  onAllocationsChanged,
 }: DashboardChartsProps) {
   return (
     <Box className={classes.chartsGrid}>
@@ -118,6 +130,16 @@ export function DashboardCharts({
           <Text className={classes.emptyText}>אין הוצאות להצגה.</Text>
         )}
       </Box>
+
+      {exchangeRates ? (
+        <CategoryBudgetCard
+          allocations={allocations}
+          categories={categories}
+          categorySpentMap={categorySpentMap}
+          exchangeRates={exchangeRates}
+          onChanged={onAllocationsChanged}
+        />
+      ) : null}
     </Box>
   );
 }

@@ -24,6 +24,8 @@ export default function Main() {
     incomes,
     goals,
     categories,
+    allocations,
+    categorySpentMap,
     exchangeRates,
     orderedExpenseBoxes,
     spendingData,
@@ -59,6 +61,11 @@ export default function Main() {
           spendingData={spendingData}
           savingsData={savingsData}
           expenseTypeData={expenseTypeData}
+          allocations={allocations}
+          categories={categories}
+          categorySpentMap={categorySpentMap}
+          exchangeRates={exchangeRates}
+          onAllocationsChanged={() => void handleSaved()}
         />
 
         <Stack className={classes.tablesStack}>

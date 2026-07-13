@@ -1,6 +1,7 @@
 import type {
   AvailableCash,
   CapitalInvestment,
+  CategoryAllocation,
   Expense,
   FutureMoney,
   Goal,
@@ -117,6 +118,18 @@ export function mapExpense(
 
 export function mapGoal(record: Goal) {
   return mapGoalAmounts(record);
+}
+
+export function mapCategoryAllocation(
+  record: CategoryAllocation & { category: SpendingCategory },
+) {
+  const { category, ...allocation } = record;
+  return {
+    ...mapIncomeAmounts(allocation),
+    categoryId: allocation.categoryId,
+    currency: allocation.currency,
+    category: mapSpendingCategory(category),
+  };
 }
 
 export function mapAvailableCash(record: AvailableCash) {

@@ -179,6 +179,24 @@ export function buildExpenseTypeData(
   ].filter((entry) => entry.value > 0);
 }
 
+export function buildCategorySpentMap(
+  expenses: StoredExpense[],
+  rates: Record<CapitalCurrency, number> = DEFAULT_RATES,
+): Record<string, number> {
+  const totals: Record<string, number> = {};
+
+  for (const expense of expenses) {
+    const amount = convertToIls(
+      monthlyExpenseAmount(expense),
+      expense.currency,
+      rates,
+    );
+    totals[expense.categoryId] = (totals[expense.categoryId] ?? 0) + amount;
+  }
+
+  return totals;
+}
+
 export function computeFinanceSummary(data: FinanceData | null) {
   const rates = getRates(data);
   const incomes = data?.incomes ?? [];
@@ -207,6 +225,7 @@ export function computeFinanceSummary(data: FinanceData | null) {
 
   return {
     categories: data?.categories ?? [],
+    allocations: data?.allocations ?? [],
     incomes,
     goals,
     activeExpenses,
@@ -219,6 +238,7 @@ export function computeFinanceSummary(data: FinanceData | null) {
     spendingData: buildSpendingData(activeExpenses, rates),
     expenseTypeData: buildExpenseTypeData(expenseBoxes, rates),
     savingsData: buildSavingsData(totalIncome, totalExpenses, totalGoals, savings),
+    categorySpentMap: buildCategorySpentMap(activeExpenses, rates),
   };
 }
 

@@ -1,0 +1,97 @@
+.cardBody {
+  height: 300px;
+  overflow-y: auto;
+  margin-top: var(--mantine-spacing-md);
+  padding-inline-start: var(--mantine-spacing-xs);
+  padding-inline-end: var(--mantine-spacing-md);
+  scrollbar-gutter: stable;
+}
+
+.stack {
+  gap: var(--mantine-spacing-md);
+}
+
+.emptyText {
+  color: var(--mantine-color-dimmed);
+  text-align: center;
+}
+
+.track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-xs);
+  padding: var(--mantine-spacing-sm) 0;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.track:last-child {
+  border-bottom: none;
+}
+
+.trackHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-sm);
+  flex-wrap: wrap;
+}
+
+.categoryLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: var(--mantine-radius-sm);
+  flex-shrink: 0;
+}
+
+.stats {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-dimmed);
+}
+
+.overBudget {
+  color: var(--mantine-color-red-4);
+  font-weight: 600;
+}
+
+.underBudget {
+  color: var(--mantine-color-teal-4);
+  font-weight: 600;
+}
+
+.editRow {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(120px, 1fr) auto;
+  gap: var(--mantine-spacing-sm);
+  align-items: flex-end;
+}
+
+@media (max-width: 480px) {
+  .editRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.addButton {
+  align-self: flex-start;
+  --button-bg: transparent;
+  --button-hover: var(--mantine-color-default-hover);
+  --button-color: var(--mantine-color-default-color);
+  --button-bd: 1px solid var(--mantine-color-default-border);
+}
+
+.addButton svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.error {
+  color: var(--mantine-color-red-4);
+  font-size: var(--mantine-font-size-sm);
+}
