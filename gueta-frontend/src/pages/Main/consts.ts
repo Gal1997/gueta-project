@@ -1,4 +1,5 @@
 import type {
+  ExpenseKind,
   FinanceData,
   StoredExpense,
   StoredGoal,
@@ -91,6 +92,7 @@ export type ModalState = {
   entity: FinanceEntity;
   mode: "add" | "edit";
   recordId?: string;
+  expensePreset?: ExpenseKind;
   income?: StoredIncome;
   expense?: StoredExpense;
   goal?: StoredGoal;

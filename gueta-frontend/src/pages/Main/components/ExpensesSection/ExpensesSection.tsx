@@ -1,5 +1,5 @@
 import { Box } from "@mantine/core";
-import type { StoredExpense } from "../../../../auth/authApi";
+import type { ExpenseKind, StoredExpense } from "../../../../auth/authApi";
 import type { ExpenseBoxItem } from "../../consts";
 import { ExpenseBox } from "../ExpenseBox/ExpenseBox";
 import classes from "./ExpensesSection.module.css";
@@ -7,7 +7,7 @@ import classes from "./ExpensesSection.module.css";
 type ExpensesSectionProps = {
   orderedExpenseBoxes: ExpenseBoxItem[];
   boxPlacement: string[];
-  onAdd: () => void;
+  onAdd: (preset: ExpenseKind) => void;
   onEdit: (expense: StoredExpense) => void;
   onDelete: (expense: StoredExpense) => void;
 };
@@ -30,7 +30,7 @@ export function ExpensesSection({
           emptyText={box.emptyText}
           showMonthlyCharge={box.showMonthlyCharge}
           className={boxPlacement[index]}
-          onAdd={onAdd}
+          onAdd={() => onAdd(box.key as ExpenseKind)}
           onEdit={onEdit}
           onDelete={onDelete}
         />

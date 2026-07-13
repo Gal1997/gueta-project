@@ -1,0 +1,29 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font: inherit;
+  color: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  border-radius: var(--mantine-radius-sm);
+  padding: 0.125rem 0;
+}
+
+.button:hover {
+  color: var(--mantine-color-text);
+}
+
+.button.center {
+  justify-content: center;
+  width: 100%;
+}
+
+.active {
+  color: var(--mantine-color-text);
+}
+
+.icon {
+  flex-shrink: 0;
+  opacity: 0.85;
+}

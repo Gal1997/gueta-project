@@ -1,0 +1,11 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--mantine-color-dimmed);
+}

@@ -8,8 +8,9 @@ import { navigateAfterAuth } from "./utils";
 
 export function useLogin() {
   const navigate = useNavigate();
-  const { login, loginWithGoogle } = useAuth();
+  const { login, loginWithGoogle, register } = useAuth();
   const [submitting, setSubmitting] = useState(false);
+  const [demoNewLoading, setDemoNewLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [googleError, setGoogleError] = useState("");
 
@@ -71,13 +72,36 @@ export function useLogin() {
     }
   }
 
+  async function handleDemoNewUser() {
+    setDemoNewLoading(true);
+    try {
+      const suffix = crypto.randomUUID().slice(0, 8);
+      await register({
+        name: "משתמש דמו",
+        email: `demo-${suffix}@test.local`,
+        password: `demo-${suffix}`,
+      });
+      navigate("/onboarding");
+    } catch (error) {
+      form.setErrors({
+        email: " ",
+        password:
+          error instanceof Error ? error.message : ERRORS.registerFailed,
+      });
+    } finally {
+      setDemoNewLoading(false);
+    }
+  }
+
   return {
     form,
     submitting,
+    demoNewLoading,
     googleLoading,
     googleError,
     handleLogin,
     handleDemoLogin,
+    handleDemoNewUser,
     handleGoogle,
   };
 }

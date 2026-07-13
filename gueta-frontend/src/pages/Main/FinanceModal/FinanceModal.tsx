@@ -1,6 +1,7 @@
 import { Modal, Stack } from "@mantine/core";
 import { useState } from "react";
 import type {
+  ExpenseKind,
   SpendingCategory,
   StoredExpense,
   StoredGoal,
@@ -21,6 +22,7 @@ interface FinanceModalProps {
   entity: FinanceEntity;
   mode: "add" | "edit";
   recordId?: string;
+  expensePreset?: ExpenseKind;
   initialIncome?: StoredIncome | null;
   initialExpense?: StoredExpense | null;
   initialGoal?: StoredGoal | null;
@@ -34,6 +36,7 @@ export default function FinanceModal({
   entity,
   mode,
   recordId,
+  expensePreset,
   initialIncome,
   initialExpense,
   initialGoal,
@@ -57,6 +60,7 @@ export default function FinanceModal({
     entity,
     mode,
     recordId,
+    expensePreset,
     initialIncome,
     initialExpense,
     initialGoal,

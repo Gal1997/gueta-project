@@ -22,6 +22,29 @@ export function formatExpenseBilling(expense: StoredExpense): string {
   return `${dayjs(expense.billingDate).date()} לחודש`;
 }
 
+/** Whether the expense has already been charged (vs. still pending this cycle). */
+export function isExpenseBilled(
+  expense: Pick<
+    StoredExpense,
+    "recurrence" | "billingDate" | "remainingPayments"
+  >,
+  now = dayjs(),
+): boolean {
+  if (expense.recurrence === "once") {
+    const billing = dayjs(expense.billingDate);
+    return billing.isBefore(now, "day") || billing.isSame(now, "day");
+  }
+
+  if (
+    !isInfiniteRemainingPayments(expense.remainingPayments) &&
+    expense.remainingPayments <= 0
+  ) {
+    return true;
+  }
+
+  return now.date() >= dayjs(expense.billingDate).date();
+}
+
 export function isActiveExpense(expense: StoredExpense): boolean {
   if (expense.recurrence === "once") {
     const billing = dayjs(expense.billingDate);

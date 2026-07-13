@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
 import type {
+  ExpenseKind,
   SpendingCategory,
   StoredExpense,
   StoredGoal,
@@ -24,6 +25,7 @@ interface UseFinanceModalParams {
   entity: FinanceEntity;
   mode: "add" | "edit";
   recordId?: string;
+  expensePreset?: ExpenseKind;
   initialIncome?: StoredIncome | null;
   initialExpense?: StoredExpense | null;
   initialGoal?: StoredGoal | null;
@@ -37,6 +39,7 @@ export function useFinanceModal({
   entity,
   mode,
   recordId,
+  expensePreset,
   initialIncome,
   initialExpense,
   initialGoal,
@@ -105,11 +108,27 @@ export function useFinanceModal({
     }
 
     if (entity === "expense") {
-      const recurrence = initialExpense?.recurrence ?? "recurring";
+      let recurrence = "recurring";
+      let kind = "fixed";
+
+      if (initialExpense) {
+        recurrence = initialExpense.recurrence;
+        kind = initialExpense.kind;
+      } else if (expensePreset === "once") {
+        recurrence = "once";
+        kind = "once";
+      } else if (expensePreset === "fixed") {
+        recurrence = "recurring";
+        kind = "fixed";
+      } else if (expensePreset === "debt") {
+        recurrence = "recurring";
+        kind = "debt";
+      }
+
       setExpenseRecurrence(recurrence);
       expenseForm.setValues({
         recurrence,
-        kind: initialExpense?.kind ?? (recurrence === "once" ? "once" : "fixed"),
+        kind,
         categoryId: initialExpense?.categoryId ?? categories[0]?.id ?? "",
         name: initialExpense?.name ?? "",
         currency: initialExpense?.currency ?? "ILS",
@@ -146,7 +165,7 @@ export function useFinanceModal({
         targetDate: initialGoal?.targetDate ?? null,
       });
     }
-  }, [opened, entity, mode, initialIncome, initialExpense, initialGoal, categories]);
+  }, [opened, entity, mode, expensePreset, initialIncome, initialExpense, initialGoal, categories]);
 
   async function handleSubmit() {
     setError("");

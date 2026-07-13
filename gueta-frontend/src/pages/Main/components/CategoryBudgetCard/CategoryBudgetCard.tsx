@@ -26,6 +26,7 @@ import { categoriesToSelectData, sortCategoriesForDisplay } from "../../../../fi
 import { MONEY_DECIMAL_SCALE } from "../../../../finance/money";
 import { REQUIRED } from "../../../../finance/constants";
 import chartClasses from "../DashboardCharts/DashboardCharts.module.css";
+import { DeleteConfirmModal } from "../DeleteConfirmModal/DeleteConfirmModal";
 import classes from "./CategoryBudgetCard.module.css";
 
 type CategoryBudgetCardProps = {
@@ -57,6 +58,7 @@ export function CategoryBudgetCard({
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const sortedCategories = useMemo(
     () => sortCategoriesForDisplay(categories),
@@ -130,6 +132,17 @@ export function CategoryBudgetCard({
     }
   }
 
+  const deleteConfirmTarget = useMemo(() => {
+    if (!deleteConfirmId) return null;
+    const allocation = allocations.find((item) => item.id === deleteConfirmId);
+    if (!allocation) return null;
+    return {
+      entity: "expense" as const,
+      recordId: allocation.id,
+      label: `מעקב תקציב · ${allocation.category.name}`,
+    };
+  }, [allocations, deleteConfirmId]);
+
   async function handleDelete(id: string) {
     setDeletingId(id);
     setError("");
@@ -140,6 +153,7 @@ export function CategoryBudgetCard({
         setDraft(null);
       }
       await onChanged();
+      setDeleteConfirmId(null);
     } catch (deleteError) {
       setError(
         deleteError instanceof Error ? deleteError.message : "מחיקה נכשלה",
@@ -251,8 +265,7 @@ export function CategoryBudgetCard({
                     variant="default"
                     color="red"
                     aria-label="מחק מעקב"
-                    loading={deletingId === allocation.id}
-                    onClick={() => void handleDelete(allocation.id)}
+                    onClick={() => setDeleteConfirmId(allocation.id)}
                   >
                     <IconTrash size={16} />
                   </ActionIcon>
@@ -328,6 +341,17 @@ export function CategoryBudgetCard({
         {error ? <Text className={classes.error}>{error}</Text> : null}
       </Stack>
       </Box>
+
+      <DeleteConfirmModal
+        deleteTarget={deleteConfirmTarget}
+        deleting={deletingId !== null}
+        onClose={() => setDeleteConfirmId(null)}
+        onConfirm={() => {
+          if (deleteConfirmId) {
+            void handleDelete(deleteConfirmId);
+          }
+        }}
+      />
     </Box>
   );
 }

@@ -81,7 +81,7 @@ export default function Main() {
           <ExpensesSection
             orderedExpenseBoxes={orderedExpenseBoxes}
             boxPlacement={boxPlacement}
-            onAdd={() => openAdd("expense")}
+            onAdd={(preset) => openAdd("expense", preset)}
             onEdit={(expense: StoredExpense) => openEdit("expense", expense)}
             onDelete={(expense: StoredExpense) =>
               openDelete("expense", expense.id, expense.name)
@@ -107,6 +107,7 @@ export default function Main() {
           entity={modal.entity}
           mode={modal.mode}
           recordId={modal.recordId}
+          expensePreset={modal.expensePreset}
           initialIncome={modal.income}
           initialExpense={modal.expense}
           initialGoal={modal.goal}

@@ -1,10 +1,23 @@
 @import url("https://fonts.googleapis.com/css2?family=Rubik+Bubbles&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rubik+Moonrocks&display=swap");
+
+.demoGroup {
+  gap: var(--mantine-spacing-sm);
+}
 
 .demoButton {
-    font-family: "Rubik Bubbles", cursive;
-
+  font-family: "Rubik Bubbles", cursive;
   letter-spacing: 0.1em;
   font-weight: 300;
   color: var(--mantine-color-grape-3);
+  padding: 0;
+}
 
+.demoNewButton {
+  font-family: "Rubik Moonrocks", cursive;
+  letter-spacing: 0.05em;
+  font-weight: 400;
+  color: var(--mantine-color-teal-3);
+  font-size: 0.8rem;
+  padding: 0;
 }

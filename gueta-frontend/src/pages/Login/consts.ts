@@ -18,4 +18,5 @@ export const VALIDATION = {
 export const ERRORS = {
   loginFailed: "ההתחברות נכשלה",
   googleFailed: "ההתחברות עם Google נכשלה.",
+  registerFailed: "ההרשמה נכשלה",
 } as const;

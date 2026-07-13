@@ -20,7 +20,7 @@ import { BRAND_LOGO, BRAND_NAME, LOGIN_COPY } from "./consts";
 import { useLogin } from "./useLogin";
 
 export default function Login() {
-  const { form, submitting, googleLoading, googleError, handleLogin, handleDemoLogin, handleGoogle } =
+  const { form, submitting, demoNewLoading, googleLoading, googleError, handleLogin, handleDemoLogin, handleDemoNewUser, handleGoogle } =
     useLogin();
 
   return (
@@ -61,15 +61,29 @@ export default function Login() {
             {LOGIN_COPY.submit}
           </Button>
 
-          <Button
-            type="button"
-            variant="default"
-            className={loginClasses.demoButton}
-            loading={submitting}
-            onClick={() => void handleDemoLogin()}
-          >
-            כניסת דמו עם אבי
-          </Button>
+          <Group grow className={loginClasses.demoGroup}>
+            <Button
+              type="button"
+              variant="default"
+              className={loginClasses.demoButton}
+              loading={submitting}
+              disabled={demoNewLoading}
+              onClick={() => void handleDemoLogin()}
+            >
+              כניסת דמו עם אבי
+            </Button>
+
+            <Button
+              type="button"
+              variant="default"
+              className={loginClasses.demoNewButton}
+              loading={demoNewLoading}
+              disabled={submitting}
+              onClick={() => void handleDemoNewUser()}
+            >
+              כניסת דמו משתמש חדש
+            </Button>
+          </Group>
         </Box>
 
         <Divider label="או" labelPosition="center" className={classes.divider} />

@@ -7,6 +7,7 @@ import {
   getFinanceData,
 } from "../../auth/authApi";
 import type {
+  ExpenseKind,
   FinanceData,
   StoredExpense,
   StoredGoal,
@@ -72,8 +73,12 @@ export function useMain() {
     expenseSectionClasses.rightBottomBox,
   ];
 
-  function openAdd(entity: FinanceEntity) {
-    setModal({ entity, mode: "add" });
+  function openAdd(entity: FinanceEntity, expensePreset?: ExpenseKind) {
+    setModal({
+      entity,
+      mode: "add",
+      ...(entity === "expense" && expensePreset ? { expensePreset } : {}),
+    });
   }
 
   function openEdit(

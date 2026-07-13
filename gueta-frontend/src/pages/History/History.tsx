@@ -10,8 +10,10 @@ import {
 } from "@mantine/core";
 import { TableActionsMenu } from "../../components/TableFilter/TableActionsMenu";
 import { TableFilterBar } from "../../components/TableFilter/TableFilterBar";
+import { SortableTableHeader } from "../../components/TableFilter/SortableTableHeader";
 import { FILTER_NO_RESULTS } from "../../components/TableFilter/consts";
 import { useTableFilter } from "../../components/TableFilter/useTableFilter";
+import { useTableSort } from "../../components/TableFilter/useTableSort";
 import type { StoredExpense } from "../../auth/authApi";
 import {
   EXPENSE_KIND_LABELS,
@@ -21,6 +23,11 @@ import {
   formatExpenseBilling,
   formatRemainingPayments,
 } from "../../finance/expenseUtils";
+import { ExpenseBillingCell } from "../../finance/ExpenseBillingCell";
+import {
+  expenseSortComparators,
+  type ExpenseSortColumn,
+} from "../../finance/expenseTableSort";
 import classes from "./History.module.css";
 import { COPY } from "./consts";
 import { formatMoney } from "../../finance/currency";
@@ -48,6 +55,18 @@ export default function History() {
     toggleSearch,
     filteredItems,
   } = useTableFilter(expenses, getHistorySearchText);
+
+  const { sort, toggleSort, sortedItems } = useTableSort(
+    filteredItems,
+    expenseSortComparators,
+  );
+
+  const sortColumn = sort?.column ?? null;
+  const sortDirection = sort?.direction ?? null;
+
+  function handleSort(column: ExpenseSortColumn) {
+    toggleSort(column);
+  }
 
   if (loading) {
     return (
@@ -83,24 +102,49 @@ export default function History() {
             {searchOpen && (
               <TableFilterBar search={search} onSearchChange={setSearch} />
             )}
-            {filteredItems.length > 0 ? (
+            {sortedItems.length > 0 ? (
               <Table.ScrollContainer className={classes.tableScroll} minWidth={560}>
                 <Table className={classes.table}>
                   <Table.Thead>
                     <Table.Tr>
                       <Table.Th>סוג</Table.Th>
-                      <Table.Th>קטגוריה</Table.Th>
+                      <SortableTableHeader
+                        label="קטגוריה"
+                        column="category"
+                        sortColumn={sortColumn}
+                        sortDirection={sortDirection}
+                        onSort={handleSort}
+                      />
                       <Table.Th>שם</Table.Th>
-                      <Table.Th>סכום</Table.Th>
+                      <SortableTableHeader
+                        label="סכום"
+                        column="amount"
+                        sortColumn={sortColumn}
+                        sortDirection={sortDirection}
+                        onSort={handleSort}
+                      />
                       <Table.Th>תיאור</Table.Th>
-                      <Table.Th className={classes.remainingCol}>
-                        תשלומים שנותרו
-                      </Table.Th>
-                      <Table.Th className={classes.billingCol}>חיוב</Table.Th>
+                      <SortableTableHeader
+                        label="תשלומים שנותרו"
+                        column="remainingPayments"
+                        sortColumn={sortColumn}
+                        sortDirection={sortDirection}
+                        onSort={handleSort}
+                        className={classes.remainingCol}
+                        centered
+                      />
+                      <SortableTableHeader
+                        label="חיוב"
+                        column="billing"
+                        sortColumn={sortColumn}
+                        sortDirection={sortDirection}
+                        onSort={handleSort}
+                        className={classes.billingCol}
+                      />
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
-                    {filteredItems.map((expense) => (
+                    {sortedItems.map((expense) => (
                       <Table.Tr key={expense.id}>
                         <Table.Td>
                           {EXPENSE_RECURRENCE_LABELS[expense.recurrence] ??
@@ -118,7 +162,7 @@ export default function History() {
                             : formatRemainingPayments(expense.remainingPayments)}
                         </Table.Td>
                         <Table.Td className={classes.billingCol}>
-                          {formatExpenseBilling(expense)}
+                          <ExpenseBillingCell expense={expense} />
                         </Table.Td>
                       </Table.Tr>
                     ))}
